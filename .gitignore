@@ -1,0 +1,38 @@
+# secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS / VS Code
+.DS_Store
+.vscode/
+
+# data / images / generated files
+images/
+data/
+outputs/
+generated/
+tmp/
+
+# logs
+*.log
+
+# large/local data and assets
+data_parsein/
+demo/
+橱窗素材/
+
+# generated/cache
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.venv/
+venv/
+outputs/
+generated/
