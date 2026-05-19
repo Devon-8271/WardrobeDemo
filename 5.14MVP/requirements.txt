@@ -1,0 +1,9 @@
+openai
+python-dotenv
+requests
+groq
+Pillow
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2

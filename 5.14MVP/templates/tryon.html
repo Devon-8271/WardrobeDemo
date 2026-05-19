@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block title %}随手试穿 — Fashion Agent{% endblock %}
+
+{% block extra_style %}
+.tryon-wrap {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hint {
+  font-size: 12px;
+  color: var(--c-text-sub);
+  line-height: 1.5;
+}
+
+/* Tabs */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--c-border);
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text-sub);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.tab-btn.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+}
+.tab-panel { display: none; flex-direction: column; gap: 16px; }
+.tab-panel.active { display: flex; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--c-border);
+  border-radius: var(--r-card);
+  background: var(--c-surface);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.drop-zone:hover,
+.drop-zone.dragging { border-color: var(--c-primary); background: #fafafa; }
+.drop-zone .drop-main { font-size: 14px; color: var(--c-primary); font-weight: 500; }
+.drop-zone .drop-sub  { font-size: 12px; color: var(--c-text-sub); margin-top: 6px; }
+
+/* Result block placeholder */
+.result-placeholder {
+  height: 55vh;
+  background: #f5f5f5;
+  border-radius: var(--r-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text-mute);
+  font-size: 12px;
+}
+
+/* Preview / result */
+.image-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.image-cell {
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.image-cell-label {
+  font-size: 11px;
+  color: var(--c-text-sub);
+  padding: 8px 10px 4px;
+}
+.image-cell-img {
+  width: 100%;
+  height: 55vh;
+  object-fit: contain;
+  background: #fafafa;
+  display: block;
+}
+.image-cell-placeholder {
+  width: 100%;
+  height: 55vh;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text-mute);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px;
+}
+
+/* Full-width result image (wardrobe mode) */
+.result-img-full {
+  width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  background: #f5f5f5;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  display: block;
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  height: 55vh;
+  color: var(--c-text-sub);
+  font-size: 13px;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  line-height: 1.6;
+  justify-content: center;
+}
+
+/* Error */
+.error-box {
+  background: #fff4f3;
+  border: 1px solid #f5c6c1;
+  border-radius: var(--r-card);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #c0392b;
+}
+
+/* Actions */
+.action-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Category filter chips */
+.category-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.category-chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-sub);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.category-chip.active {
+  background: var(--c-primary);
+  color: #fff;
+  border-color: var(--c-primary);
+}
+
+/* Wardrobe select grid */
+.wardrobe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.wardrobe-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: var(--c-surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s;
+}
+.wardrobe-cell.selected { border-color: var(--c-primary); }
+.wardrobe-cell img { width: 100%; height: 100%; object-fit: contain; }
+.wardrobe-cell-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--c-text-mute);
+}
+.wardrobe-cell-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,.88);
+  font-size: 10px; color: var(--c-primary);
+  padding: 3px 5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wardrobe-check {
+  display: none; position: absolute; top: 4px; right: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--c-primary); color: #fff;
+  font-size: 11px; align-items: center; justify-content: center;
+}
+.wardrobe-cell.selected .wardrobe-check { display: flex; }
+
+/* Sticky confirm bar */
+.tryon-confirm-bar {
+  position: sticky; bottom: 0;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  padding: 10px 20px;
+  display: none;
+}
+.tryon-confirm-bar.visible { display: block; }
+.tryon-confirm-bar button {
+  width: 100%; padding: 13px;
+  background: var(--c-primary); color: #fff;
+  border: none; border-radius: var(--r-card);
+  font-size: 15px; cursor: pointer;
+}
+.tryon-confirm-bar button:disabled { opacity: .35; cursor: default; }
+{% endblock %}
+
+{% block header %}
+<header class="page-header">
+  <a class="back-btn" href="/">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    返回
+  </a>
+  <span class="header-title">随手试穿</span>
+  <div class="header-actions"></div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="tryon-wrap">
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-btn-upload"   onclick="switchTab('upload')">上传图片</button>
+    <button class="tab-btn"        id="tab-btn-wardrobe" onclick="switchTab('wardrobe')">从衣橱选</button>
+  </div>
+
+  <!-- Upload tab -->
+  <div class="tab-panel active" id="tab-upload">
+    <div id="state-area"><div class="result-placeholder">效果图将显示在这里</div></div>
+    <div class="hint">上传衣物图，AI 把它穿到你的主照上。支持多件平铺图。生成约 1–5 分钟。</div>
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-main">点击或拖入衣物图</div>
+      <div class="drop-sub">支持 jpg / png，建议白底或纯色背景</div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+  </div>
+
+  <!-- Wardrobe tab -->
+  <div class="tab-panel" id="tab-wardrobe">
+    <div id="wardrobe-state-area"><div class="result-placeholder">效果图将显示在这里</div></div>
+    <div class="hint">从衣橱选 1–7 件单品，AI 帮你组合试穿效果。生成约 1–5 分钟。</div>
+    <div class="category-chips" id="category-chips"></div>
+    <div class="wardrobe-grid" id="wardrobe-grid"></div>
+  </div>
+
+</div>
+
+<!-- Sticky confirm bar (outside tryon-wrap) -->
+<div class="tryon-confirm-bar" id="tryon-confirm-bar">
+  <button id="confirm-tryon-btn" onclick="submitWardrobeTryon()">试穿选中单品（0 件）</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const dropZone         = document.getElementById("drop-zone");
+const fileInput        = document.getElementById("file-input");
+const stateArea        = document.getElementById("state-area");
+const wardrobeStateArea = document.getElementById("wardrobe-state-area");
+
+function escHtml(s) {
+  return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+let _currentTab     = "upload";
+let _wardrobeLoaded = false;
+
+function switchTab(tab) {
+  _currentTab = tab;
+  document.getElementById("tab-btn-upload").classList.toggle("active",   tab === "upload");
+  document.getElementById("tab-btn-wardrobe").classList.toggle("active", tab === "wardrobe");
+  document.getElementById("tab-upload").classList.toggle("active",   tab === "upload");
+  document.getElementById("tab-wardrobe").classList.toggle("active", tab === "wardrobe");
+  if (tab === "wardrobe" && !_wardrobeLoaded) loadWardrobeItems();
+  updateConfirmBar();
+}
+
+// ── Upload tab ────────────────────────────────────────────────────────────────
+dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragging"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragging"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("dragging");
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener("change", e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+function showLoading(previewUrl) {
+  stateArea.innerHTML = `
+    <div class="image-row">
+      <div class="image-cell">
+        <div class="image-cell-label">你上传的衣物</div>
+        <img class="image-cell-img" src="${escHtml(previewUrl)}" alt="">
+      </div>
+      <div class="image-cell">
+        <div class="image-cell-label">试穿效果</div>
+        <div class="image-cell-placeholder">
+          <div>
+            <div class="spinner" style="margin: 0 auto 10px"></div>
+            生成中…<br>大约 1–5 分钟
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function showResult(inputUrl, resultUrl) {
+  stateArea.innerHTML = `
+    <div class="image-row">
+      <div class="image-cell">
+        <div class="image-cell-label">你上传的衣物</div>
+        <img class="image-cell-img" src="${escHtml(inputUrl)}" alt="">
+      </div>
+      <div class="image-cell">
+        <div class="image-cell-label">试穿效果</div>
+        <img class="image-cell-img" src="${escHtml(resultUrl)}" alt="">
+      </div>
+    </div>
+    <div class="action-row" style="margin-top:8px">
+      <button class="btn-ghost" onclick="resetUpload()">再试一张</button>
+      <a class="btn-primary" href="${escHtml(resultUrl)}" download style="text-decoration:none">下载效果图</a>
+    </div>`;
+}
+
+function formatError(err) {
+  if (!err) return "未知错误";
+
+  if (typeof err === "string") {
+    return err;
+  }
+
+  if (err.message) {
+    return err.message;
+  }
+
+  if (err.detail) {
+    return err.detail;
+  }
+
+  if (err.error) {
+    return formatError(err.error);
+  }
+
+  try {
+    return JSON.stringify(err, null, 2);
+  } catch (e) {
+    return String(err);
+  }
+}
+
+function showError(msg) {
+  stateArea.innerHTML = `
+    <div class="error-box">${escHtml(formatError(msg))}</div>
+    <div class="action-row" style="margin-top:8px">
+      <button class="btn-ghost" onclick="resetUpload()">重试</button>
+    </div>`;
+}
+
+function resetUpload() {
+  stopPolling();
+  stateArea.innerHTML = `<div class="result-placeholder">效果图将显示在这里</div>`;
+  fileInput.value = "";
+}
+
+async function handleFile(file) {
+  stopPolling();
+  const previewUrl = URL.createObjectURL(file);
+  showLoading(previewUrl);
+
+  const fd = new FormData();
+  fd.append("file", file);
+
+  try {
+    const r = await fetch("/api/tasks/quick-tryon", { method: "POST", body: fd });
+    const data = await r.json();
+    if (!data.ok) { showError(data.error || "提交失败"); return; }
+    pollTask(data.task_id,
+      t  => showResult(t.input_url || previewUrl, t.result_url),
+      msg => showError(msg)
+    );
+  } catch (err) {
+    showError("网络错误，请稍后重试");
+  }
+}
+
+// ── Wardrobe tab ──────────────────────────────────────────────────────────────
+let _selectedIds     = new Set();
+let _allItems        = [];
+let _activeCategory  = "全部";
+
+async function loadWardrobeItems() {
+  const grid = document.getElementById("wardrobe-grid");
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--c-text-sub);font-size:13px">
+    <div class="spinner" style="margin:0 auto 10px"></div>加载中…</div>`;
+  try {
+    const r    = await fetch("/api/wardrobe");
+    const data = await r.json();
+    _allItems       = data.items || [];
+    _wardrobeLoaded = true;
+    _activeCategory = "全部";
+    renderCategoryChips();
+    renderWardrobeGrid();
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#c0392b;font-size:13px">加载失败，请稍后重试</div>`;
+  }
+}
+
+function renderCategoryChips() {
+  const cats = ["全部", ...new Set(_allItems.map(it => it.category).filter(Boolean))];
+  const container = document.getElementById("category-chips");
+  container.innerHTML = cats.map(cat => `
+    <div class="category-chip${cat === _activeCategory ? " active" : ""}"
+         onclick="selectCategory('${escHtml(cat)}')">${escHtml(cat)}</div>
+  `).join("");
+}
+
+function selectCategory(cat) {
+  _activeCategory = cat;
+  renderCategoryChips();
+  renderWardrobeGrid();
+}
+
+function renderWardrobeGrid() {
+  const items = _activeCategory === "全部"
+    ? _allItems
+    : _allItems.filter(it => it.category === _activeCategory);
+
+  const grid = document.getElementById("wardrobe-grid");
+  if (!items.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--c-text-sub);font-size:13px">该分类暂无单品</div>`;
+    return;
+  }
+  grid.innerHTML = items.map(it => {
+    const imgSrc   = it.image_url || it.image_crop_url || "";
+    const label    = it.description || it.type || it.item_id;
+    const iid      = escHtml(it.item_id);
+    const selected = _selectedIds.has(it.item_id) ? " selected" : "";
+    return `
+      <div class="wardrobe-cell${selected}" data-item-id="${iid}" onclick="toggleSelect(this, '${iid}')">
+        ${imgSrc
+          ? `<img src="${escHtml(imgSrc)}" alt="${escHtml(label)}" loading="lazy">`
+          : `<div class="wardrobe-cell-placeholder">👕</div>`}
+        <div class="wardrobe-cell-label">${escHtml(label)}</div>
+        <div class="wardrobe-check">✓</div>
+      </div>`;
+  }).join("");
+}
+
+function toggleSelect(cell, itemId) {
+  if (_selectedIds.has(itemId)) {
+    _selectedIds.delete(itemId);
+    cell.classList.remove("selected");
+  } else {
+    if (_selectedIds.size >= 7) return;  // image2 上限：1 人照 + 7 件衣物 = 8 张
+    _selectedIds.add(itemId);
+    cell.classList.add("selected");
+  }
+  updateConfirmBar();
+}
+
+function updateConfirmBar() {
+  const bar = document.getElementById("tryon-confirm-bar");
+  const btn = document.getElementById("confirm-tryon-btn");
+  const n   = _selectedIds.size;
+  if (_currentTab === "wardrobe" && n > 0) {
+    bar.classList.add("visible");
+    btn.textContent = `试穿选中单品（${n} 件）`;
+    btn.disabled = false;
+  } else {
+    bar.classList.remove("visible");
+    btn.disabled = true;
+  }
+}
+
+async function submitWardrobeTryon() {
+  if (!_selectedIds.size) return;
+  const ids = [..._selectedIds];
+
+  // 清空选中状态，隐藏确认栏
+  document.querySelectorAll(".wardrobe-cell.selected").forEach(c => c.classList.remove("selected"));
+  _selectedIds.clear();
+  updateConfirmBar();
+
+  wardrobeStateArea.innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div>${ids.length} 件单品，生成试穿效果中…<br>大约 1–5 分钟</div>
+    </div>`;
+
+  try {
+    const r    = await fetch("/api/tasks/tryon-outfit", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ item_ids: ids }),
+    });
+    const data = await r.json();
+    if (!data.ok) { showWardrobeError(data.error || "提交失败"); return; }
+    pollTask(data.task_id,
+      t  => showWardrobeResult(t.result_url),
+      msg => showWardrobeError(msg)
+    );
+  } catch (err) {
+    showWardrobeError("网络错误，请稍后重试");
+  }
+}
+
+function showWardrobeResult(resultUrl) {
+  wardrobeStateArea.innerHTML = `
+    <img class="result-img-full" src="${escHtml(resultUrl)}" alt="试穿效果">
+    <div class="action-row" style="margin-top:8px">
+      <button class="btn-ghost" onclick="resetWardrobe()">再试一套</button>
+      <a class="btn-primary" href="${escHtml(resultUrl)}" download style="text-decoration:none">下载效果图</a>
+    </div>`;
+}
+
+function showWardrobeError(msg) {
+  wardrobeStateArea.innerHTML = `
+    <div class="error-box">${escHtml(formatError(msg))}</div>
+    <div class="action-row" style="margin-top:8px">
+      <button class="btn-ghost" onclick="resetWardrobe()">重试</button>
+    </div>`;
+}
+
+function resetWardrobe() {
+  stopPolling();
+  wardrobeStateArea.innerHTML = `<div class="result-placeholder">效果图将显示在这里</div>`;
+  _selectedIds.clear();
+  _activeCategory = "全部";
+  renderCategoryChips();
+  renderWardrobeGrid();
+  updateConfirmBar();
+}
+
+// ── 共用轮询 ──────────────────────────────────────────────────────────────────
+let _pollTimer = null;
+
+function stopPolling() {
+  if (_pollTimer) { clearTimeout(_pollTimer); _pollTimer = null; }
+}
+
+function pollTask(taskId, onDone, onError) {
+  _fetchTask(taskId, onDone, onError);
+}
+
+async function _fetchTask(taskId, onDone, onError) {
+  try {
+    const r = await fetch(`/api/tasks/${encodeURIComponent(taskId)}`);
+    const t = await r.json();
+    if (!t.ok)                    { onError(t.error || "任务丢失"); return; }
+    if (t.status === "completed") { onDone(t); return; }
+    if (t.status === "failed")    { onError(t.error || "生成失败"); return; }
+    // queued / running → 继续轮询
+    _pollTimer = setTimeout(() => _fetchTask(taskId, onDone, onError), 5000);
+  } catch (err) {
+    // 网络抖动不放弃
+    _pollTimer = setTimeout(() => _fetchTask(taskId, onDone, onError), 5000);
+  }
+}
+</script>
+{% endblock %}

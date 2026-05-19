@@ -36,3 +36,14 @@ __pycache__/
 venv/
 outputs/
 generated/
+
+# 5.14MVP local assets / generated files
+5.14MVP/images/
+5.14MVP/user_photos/
+5.14MVP/ootd_photos/
+5.14MVP/__pycache__/
+5.14MVP/*.db
+5.14MVP/*.png
+5.14MVP/*.jpg
+5.14MVP/*.jpeg
+5.14MVP/*.webp

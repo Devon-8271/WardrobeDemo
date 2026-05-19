@@ -1,0 +1,8 @@
+{
+  "version": "grid_v1",
+  "layout": "2x2",
+  "cols": 2,
+  "rows": 2,
+  "prompt_template": "请基于参考图中的用户全身照，生成一张 2x2 穿搭拼图。每格让同一位用户穿上一套完整搭配。严格保持参考图中用户的脸部、发型、体型、性别特征不变，仅替换服装。四格中是同一个人。背景统一为浅灰室内，无文字水印，无边框，格与格之间无间隙。每格只穿标注的单品，不添加任何未列出的衣物或配件。{outfit_descriptions}",
+  "negative": "no text, no watermark, no border, no frame, no label, no extra clothing, no added layers"
+}

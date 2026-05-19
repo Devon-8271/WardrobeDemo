@@ -1,0 +1,2283 @@
+[
+  {
+    "category": "配件",
+    "type": "其他",
+    "raw_type": "黑色飞行员款太阳镜",
+    "color": [
+      "黑色",
+      "金色",
+      "琥珀色"
+    ],
+    "style": [
+      "复古",
+      "极简",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色宽框飞行员太阳镜，琥珀色镜片，镜腿带金属细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6262d830-f629-4922-9d0b-0f83996a6cf9_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "其他",
+    "raw_type": "粉蓝拼色印花发圈",
+    "color": [
+      "粉色",
+      "浅蓝",
+      "米白"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "粉蓝拼色缎面印花发圈，金色包边设计，丝滑轻盈质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/1f3b95dc-0039-4ad8-93ff-310d765b129d_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "其他",
+    "raw_type": "豹纹大蝴蝶结发饰",
+    "color": [
+      "豹纹棕",
+      "黑色"
+    ],
+    "style": [
+      "复古",
+      "性感",
+      "港风"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "豹纹大蝴蝶结发饰，缎面光泽感面料，造型夸张吸睛",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/9a0640e6-38d5-4b94-b8ae-c8c5676a93bb_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "米黄色黑波点薄纱围巾",
+    "color": [
+      "米黄色",
+      "黑色波点"
+    ],
+    "style": [
+      "法式",
+      "优雅",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "薄",
+    "fit": "不适用",
+    "description": "米黄色黑色波点薄纱围巾，轻盈透明质感，法式复古风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/13a5da04-3e78-4032-8e98-4e94b72d628e_a1.png"
+  },
+  {
+    "category": "下装",
+    "type": "半身裙",
+    "raw_type": "白底黑色波点蓬蓬半身裙",
+    "color": [
+      "白底黑色波点"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "薄",
+    "fit": "宽松",
+    "description": "白底黑色波点半身裙，蓬松灯笼裙摆，轻薄压纹面料",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/86a52ddd-3df7-4af9-a49d-3cac419015fd_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "蓝白格纹拼接方巾",
+    "color": [
+      "深蓝",
+      "白色条纹"
+    ],
+    "style": [
+      "休闲",
+      "复古",
+      "学院",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "薄",
+    "fit": "不适用",
+    "description": "蓝白格纹拼接方巾，轻薄棉质面料，带复古学院风细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/48eb3b84-c5d9-413f-85f0-ddb398aacb71_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "红色三角毛呢围巾",
+    "color": [
+      "红色"
+    ],
+    "style": [
+      "极简",
+      "韩系",
+      "通勤"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "不适用",
+    "description": "红色三角造型围巾，毛呢绒感面料，厚实保暖",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/5338cd61-4f6d-4c40-9be5-5a4e3dcc8aad_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "蓝色格纹流苏围巾",
+    "color": [
+      "蓝色",
+      "棕色",
+      "白色"
+    ],
+    "style": [
+      "休闲",
+      "复古",
+      "学院"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "蓝色格纹流苏围巾，毛绒质感，复古学院风",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/e9d4a07d-bc09-4757-ba9a-cf8bbff5e3fa_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "其他",
+    "raw_type": "橄榄绿三角毛绒布片",
+    "color": [
+      "橄榄绿"
+    ],
+    "style": [
+      "休闲",
+      "田园"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "橄榄绿色三角布片，毛绒卷曲纹理，厚实质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/068c9fb0-9344-4ccf-83cf-518150ab637a_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "米白色民族纹样方巾",
+    "color": [
+      "米白",
+      "深棕"
+    ],
+    "style": [
+      "民族",
+      "度假",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "中等",
+    "fit": "不适用",
+    "description": "米白色民族佩斯利花纹方巾，绒面质感，深棕边框装饰",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/3c398461-33d7-4fe6-ae2a-a4d822858464_a1.png"
+  },
+  {
+    "category": "下装",
+    "type": "半身裙",
+    "raw_type": "灰底黑色豹纹雪纺半身裙",
+    "color": [
+      "灰底黑色豹纹"
+    ],
+    "style": [
+      "休闲",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "薄",
+    "fit": "宽松",
+    "description": "灰底黑色豹纹雪纺半身裙，轻薄垂感，宽松飘逸",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/7e237427-2dbf-4a3e-93fb-c1537b33643b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "豹纹拼接流苏围巾",
+    "color": [
+      "黑色",
+      "米白",
+      "深棕"
+    ],
+    "style": [
+      "复古",
+      "街头",
+      "韩系"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "不适用",
+    "description": "黑白豹纹拼接长款围巾，毛绒针织质感，尾部带流苏",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/4d631222-9947-4de2-95b4-38bc7bce2687_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "米白色粗纹长围巾",
+    "color": [
+      "米白"
+    ],
+    "style": [
+      "休闲",
+      "极简",
+      "日系"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白色长围巾，粗纹毛绒质感，厚实柔软",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/8e84a7ad-d44f-47b9-afec-2b2aaa7ebd11_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米白色针织翻边毛线帽",
+    "color": [
+      "米白色"
+    ],
+    "style": [
+      "休闲",
+      "日系",
+      "极简"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "常规",
+    "description": "米白色粗针织翻边毛线帽，立体罗纹纹理，厚实保暖质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/2a668738-08ea-4a79-afbc-46d7650be77e_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米色编织贝雷帽",
+    "color": [
+      "米色",
+      "卡其"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "田园",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色草编贝雷帽，圆顶短檐，编织纹理清晰",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/82eabcf8-9b6d-4920-8c11-4812c60bdcd8_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "灰色罗纹针织帽",
+    "color": [
+      "灰色"
+    ],
+    "style": [
+      "休闲",
+      "日系",
+      "韩系"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "灰色罗纹针织帽，翻边设计，厚实毛线质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/576725b5-0dce-4ef2-b8ca-ceb2f0060aec_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米色编织草帽",
+    "color": [
+      "米色",
+      "浅卡其"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "田园"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色宽檐编织草帽，浅色帽带，轻盈度假感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/86b7ea75-5123-4b80-818a-1ef8d3536c71_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米色拼接格纹贝雷帽",
+    "color": [
+      "米白",
+      "卡其",
+      "灰棕格纹"
+    ],
+    "style": [
+      "复古",
+      "休闲",
+      "田园"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色拼接贝雷帽，格纹毛呢与立体绣纹质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/88e9626c-cbe0-4c14-b4b9-dc3f403ff5ad_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米色编织空顶遮阳帽",
+    "color": [
+      "米色",
+      "浅卡其"
+    ],
+    "style": [
+      "度假",
+      "休闲",
+      "田园"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色草编空顶遮阳帽，宽檐廓形，轻盈度假感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/0ecbcf3c-4535-4e5e-a385-8902de82aa4b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "豹纹刺绣棒球帽",
+    "color": [
+      "卡其底黑色豹纹",
+      "白色刺绣"
+    ],
+    "style": [
+      "休闲",
+      "街头",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "卡其豹纹棒球帽，白色字母刺绣，挺括棉质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/12c0ad6b-ed3b-4176-b16a-01074056802e_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "米色镂空针织帽",
+    "color": [
+      "米色"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "田园"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色镂空针织帽，圆顶短檐，轻薄透气质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/d4479d9e-b63f-40f0-a59d-b81337045d57_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "帽子",
+    "raw_type": "深棕色毛呢报童帽",
+    "color": [
+      "深棕"
+    ],
+    "style": [
+      "复古",
+      "休闲",
+      "日系"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色毛呢报童帽，圆顶短檐，绒面质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/c52d59c1-04de-41c4-9d0c-429aeb7bc41c_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "黑色简约金属扣腰带",
+    "color": [
+      "黑色"
+    ],
+    "style": [
+      "通勤",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色简约细长腰带，金属针扣设计，皮质表面利落百搭",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/931a1b79-a5d7-4dc1-8fcd-fc9ac9f220e7_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "卡其色铆钉皮腰带",
+    "color": [
+      "卡其",
+      "银色"
+    ],
+    "style": [
+      "朋克",
+      "街头",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "卡其色铆钉腰带，银色圆扣，皮革质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/66d0d27b-b4c9-461b-b195-a5feb0a2d59a_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "黑色雕花金属扣皮带",
+    "color": [
+      "黑色",
+      "银色"
+    ],
+    "style": [
+      "复古",
+      "极简",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色细款皮带配复古银色雕花扣头，整体风格简约利落",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/21a697ac-fad8-4d0a-ad3e-a4573904b7d9_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "酒红色细皮质腰带",
+    "color": [
+      "酒红色"
+    ],
+    "style": [
+      "复古",
+      "优雅",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "酒红色细皮质腰带，金属孔眼，简洁复古质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/8b93c6f6-c059-4030-b1cf-6df8cfa359fd_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "黑金拼色吊坠手链",
+    "color": [
+      "黑色",
+      "金色",
+      "白色珍珠"
+    ],
+    "style": [
+      "复古",
+      "朋克",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑金拼色吊坠手链，链条编织感，珍珠点缀",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/3bf5dfbd-36fd-481c-a1ec-a7954045ee5f_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "蓝色复古雕花腰带",
+    "color": [
+      "蓝色",
+      "银色"
+    ],
+    "style": [
+      "复古",
+      "民族",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "蓝色复古雕花腰带，银色金属扣饰，做旧质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/11982b46-ca73-4e6a-99f6-8c6789f79834_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "灰色压纹皮革金扣腰带",
+    "color": [
+      "灰色",
+      "金色"
+    ],
+    "style": [
+      "通勤",
+      "优雅",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "灰色压纹皮革腰带，搭配金色字母扣，质感精致百搭",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/dc5fd00a-db44-4ec5-856d-88b2bb240205_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "黑色雕花西部风腰带",
+    "color": [
+      "黑色",
+      "银色"
+    ],
+    "style": [
+      "复古",
+      "民族",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色皮革西部风腰带，搭配复古银色雕花金属扣",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/cfc22dff-330f-43bf-bdb5-335afd58e9d4_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "白色铆钉装饰腰带",
+    "color": [
+      "白色",
+      "银色"
+    ],
+    "style": [
+      "街头",
+      "朋克",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "白色仿皮腰带，银色金属扣与铆钉镶饰设计，个性感强",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/2d5a6966-e5a0-4806-b18c-4dffff9c4390_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "深棕色多口袋腰封",
+    "color": [
+      "深棕"
+    ],
+    "style": [
+      "复古",
+      "工装",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色绒面多口袋腰封，金属扣细节，复古工装感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/06184bab-0b87-4614-ad3a-8110db51011b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "腰带",
+    "raw_type": "深棕色针扣皮带",
+    "color": [
+      "深棕色",
+      "银灰色"
+    ],
+    "style": [
+      "通勤",
+      "复古",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色光面皮带，搭配银灰色针扣，简约复古风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/9a5849ce-47d9-4124-85ca-75083f52966d_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色放射纹大圈耳环",
+    "color": [
+      "银色",
+      "金色"
+    ],
+    "style": [
+      "优雅",
+      "复古",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色放射纹大圈耳环，金色边饰点缀，金属光泽感强",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/40ad042b-decb-4494-a395-5f5831ab5b18_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色纹理圆环耳环",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "复古",
+      "优雅",
+      "民族"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色放射纹理圆环耳环，立体压纹设计，金属光泽感强",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/916f8a27-5128-4c77-83ed-cb4de4af9152_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "红色圆环镶钻耳环",
+    "color": [
+      "红色",
+      "金色",
+      "透明白"
+    ],
+    "style": [
+      "甜美",
+      "复古",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "红色亮面圆环耳环，金色镶边点缀水钻，造型醒目复古",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/11cac826-b2ed-42b7-a960-78e0a3b95fe6_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色水晶雏菊耳钉",
+    "color": [
+      "银色",
+      "金色"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色水晶雏菊耳钉，金色花心，闪亮精致",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/fa6bd226-5fbe-42cd-8b9f-116521edac05_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色珍珠耳环",
+    "color": [
+      "银色",
+      "白色"
+    ],
+    "style": [
+      "优雅",
+      "法式",
+      "轻奢"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色弧形珍珠耳环，搭配水滴形吊坠，整体优雅精致",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b08d0f65-1f20-4757-b0a7-1e4bdc3c200e_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "绿色玻璃草莓耳环",
+    "color": [
+      "金色",
+      "绿色",
+      "粉色"
+    ],
+    "style": [
+      "甜美",
+      "田园",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色圆环耳饰搭配绿色玻璃草莓吊坠，点缀粉色小花细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/51259e43-fa6d-4323-9601-4b4361fd1ca3_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色细圈耳环",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "极简",
+      "优雅",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色细圈耳环，纤细圆环设计，抛光金属质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/c10832b1-c399-4c0a-9261-a6dbc4cb551f_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色蓝石心形十字耳钉",
+    "color": [
+      "银色",
+      "蓝色"
+    ],
+    "style": [
+      "甜美",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色心形耳钉，蓝石环绕十字水钻装饰",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/3e290f9d-0d7b-473d-ac09-aa625d0abb11_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色绿色玻璃球耳环",
+    "color": [
+      "银色",
+      "绿色"
+    ],
+    "style": [
+      "极简",
+      "前卫",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色环形耳环搭配绿色玻璃球点缀，镜面质感醒目",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/d2ba84ac-5a0d-4642-a4c7-87f459d4d8a1_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色半圆罩面戒指",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "极简",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色半圆罩面戒指，镜面抛光金属质感，造型极简复古",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/0ad72dc3-2d5c-4677-bff1-866a376d0dce_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色小雏菊别针耳饰",
+    "color": [
+      "金色",
+      "橘色",
+      "白色"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色安全别针造型耳饰，搭配小雏菊与珠饰细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/f597b0d7-bd69-4010-b24e-0422aefb80f3_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "浅蓝碎石半环耳钉",
+    "color": [
+      "浅蓝",
+      "金色"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "浅蓝透明碎石半环耳钉，金色金属圈设计，整体轻盈通透",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/c44f7a00-3042-43c6-8b34-63bff2b4b9f5_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "宝蓝色花瓣耳饰",
+    "color": [
+      "宝蓝色"
+    ],
+    "style": [
+      "极简",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "宝蓝色立体花瓣耳饰，中央点缀深蓝切割水晶，造型感强",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/01dd87a1-ce1f-424d-a428-345253d40044_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色链条感项链",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "朋克",
+      "街头",
+      "个性"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色缠绕结构项链，链条拼接设计，金属光泽感强烈",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/55f9c3a5-309f-43ae-b5d9-8e4811d91f33_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "围巾",
+    "raw_type": "棕色印花丝巾项链",
+    "color": [
+      "棕色",
+      "米白",
+      "金色"
+    ],
+    "style": [
+      "复古",
+      "优雅",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "棕色复古印花丝巾项链，缎面轻薄材质，搭配金属链条细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/f3e1494e-df6b-4540-a911-50f5a28a4316_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色橡果叶子吊坠项链",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "复古",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色橡果叶子吊坠项链，复古金属质感，优雅装饰感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/e1f208bc-b77e-4827-adbe-9ed08a310a71_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "透明圆珠绿色串线项链",
+    "color": [
+      "透明白",
+      "荧光绿",
+      "金色"
+    ],
+    "style": [
+      "极简",
+      "日系",
+      "甜美"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "透明圆珠串联项链，搭配亮绿色串线与金色扣件，清透感明显",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/467b8cfb-e4aa-4a2f-ac90-6a11fa803368_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色星星链条项链",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "优雅",
+      "法式",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色星星链条项链，精致金属光泽，法式优雅风",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/a8a92ceb-fe53-48b7-9318-66f9c8e78c01_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "银色圆片民族风项链",
+    "color": [
+      "银色",
+      "金色"
+    ],
+    "style": [
+      "民族",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色民族风圆片长项链，做旧金属纹理点缀金色细节",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/82d66e52-43e3-474a-91e4-40211ad54e08_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "珍珠樱桃吊坠项链",
+    "color": [
+      "白色",
+      "金色",
+      "红色"
+    ],
+    "style": [
+      "甜美",
+      "法式",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "白色珍珠串珠项链，搭配金色扣环与红色樱桃吊坠",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/16316d56-fcb4-4590-9376-c3f4a14c46b9_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色多彩串珠吊坠项链",
+    "color": [
+      "金色",
+      "多色"
+    ],
+    "style": [
+      "度假",
+      "甜美",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色细链多彩串珠项链，点缀星月与宝石吊坠，轻盈灵动",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/23fd12b5-4075-4d15-8ca0-40db247596ba_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色编绳串珠项链",
+    "color": [
+      "金色",
+      "米白",
+      "黑棕色"
+    ],
+    "style": [
+      "民族",
+      "度假",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色编绳串珠项链，点缀彩色小吊坠，轻盈复古风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/90fd9f78-6ee8-4173-aa6c-2426535b33f3_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "彩色圆片珠子手链",
+    "color": [
+      "浅绿",
+      "米白",
+      "灰褐"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "波西米亚"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "彩色圆片玻璃珠手链，多色拼接，光滑质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/5e52b438-31b6-46a9-bf24-e725cacaefea_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色小雏菊多层项链",
+    "color": [
+      "金色",
+      "橘色"
+    ],
+    "style": [
+      "复古",
+      "甜美",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色多层细链项链，点缀小雏菊花纹与橘色宝石",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6873b475-46ff-4ae8-85f9-52f1ee8da933_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "金色百合形吊坠项链",
+    "color": [
+      "金色"
+    ],
+    "style": [
+      "优雅",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色百合形吊坠项链，光面金属质感，精致链条",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/f5073819-83dc-4529-a6f4-591f58e32105_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "蓝色串珠吊坠项链",
+    "color": [
+      "湖蓝色",
+      "金色",
+      "白色"
+    ],
+    "style": [
+      "复古",
+      "优雅",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "湖蓝色串珠吊坠项链，搭配金色徽章与珍珠点缀，复古精致感明显",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6b562c0a-5814-4536-8e94-42205ef1c91a_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "首饰",
+    "raw_type": "蓝色爱心珍珠项链",
+    "color": [
+      "银色",
+      "蓝色",
+      "白色"
+    ],
+    "style": [
+      "优雅",
+      "甜美",
+      "复古"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色链条爱心吊坠项链，蓝色镶嵌配珍珠点缀，复古优雅风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/4385ed7a-6fbb-4c4f-9a5b-5d48bd694aea_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "乐福鞋",
+    "raw_type": "黑色毛绒穆勒乐福鞋",
+    "color": [
+      "黑色",
+      "米驼色"
+    ],
+    "style": [
+      "休闲",
+      "日系",
+      "韩系",
+      "复古"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "不适用",
+    "description": "黑色亮面穆勒乐福鞋，搭配米驼色长绒毛鞋面",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/e9840824-4b96-496d-9eb0-ba5346397f99_a2.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "平底鞋",
+    "raw_type": "黑色羊羔绒包头拖鞋",
+    "color": [
+      "黑色"
+    ],
+    "style": [
+      "休闲",
+      "韩系",
+      "极简"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "不适用",
+    "description": "黑色羊羔绒包头拖鞋，搭配金属扣带设计，绒面柔软厚实",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/16adab72-090e-43e2-8896-19356a79edbc_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "运动鞋",
+    "raw_type": "米色麂皮系带运动鞋",
+    "color": [
+      "米色",
+      "白色"
+    ],
+    "style": [
+      "休闲",
+      "复古",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色麂皮低帮运动鞋，白色宽鞋带设计，复古休闲风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/817b3741-bad0-4ca8-a9da-0a7d1b39153f_a2.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "运动鞋",
+    "raw_type": "蓝色拼色系带运动鞋",
+    "color": [
+      "蓝色",
+      "白色",
+      "红色"
+    ],
+    "style": [
+      "休闲",
+      "运动",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "蓝色拼色系带运动鞋，麂皮与织物拼接，休闲透气",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/990bbc6a-80a8-4137-a86f-60a4a0cfdddf_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "平底鞋",
+    "raw_type": "浅米色软皮套脚鞋",
+    "color": [
+      "浅米色",
+      "黑色"
+    ],
+    "style": [
+      "休闲",
+      "极简",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "浅米色软皮套脚平底鞋，圆头宽松鞋面，柔软皮革质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b20463e3-cbf4-4001-9ced-0f28f01583a6_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "乐福鞋",
+    "raw_type": "棕色流苏拼接乐福鞋",
+    "color": [
+      "深棕",
+      "米白",
+      "黑色"
+    ],
+    "style": [
+      "复古",
+      "学院",
+      "日系"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色拼接流苏乐福鞋，雕花鞋面搭配学院风扣带设计",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/f04b53cb-7290-4a4c-988f-d0a514de2abc_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "凉鞋",
+    "raw_type": "酒红色方头平底凉鞋",
+    "color": [
+      "酒红色"
+    ],
+    "style": [
+      "休闲",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "酒红色方头平底凉鞋，简约光面PU材质，休闲百搭",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/fcef8d71-5cc3-47ef-bab3-ce33c97217d9_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "平底鞋",
+    "raw_type": "金色平底方头鞋",
+    "color": [
+      "金色",
+      "黑色"
+    ],
+    "style": [
+      "通勤",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "金色方头平底鞋，黑色弹力鞋面覆盖，简约通勤风",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/7fc09f42-37d4-4dc6-99be-9bb4ff4934d3_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "凉鞋",
+    "raw_type": "棕色编织平底拖鞋",
+    "color": [
+      "棕色",
+      "浅米色"
+    ],
+    "style": [
+      "度假",
+      "休闲",
+      "极简"
+    ],
+    "season": [
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "棕色编织鞋面平底凉拖，方头设计，带有自然度假感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/58aa2273-b3e7-4cf9-a0e2-12de0abd41b9_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "靴子",
+    "raw_type": "白色卷毛短靴",
+    "color": [
+      "白色"
+    ],
+    "style": [
+      "休闲",
+      "度假"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "厚",
+    "fit": "不适用",
+    "description": "白色卷毛短靴，毛绒质感，舒适保暖",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6dfe31b1-8b22-4796-b2ce-13bc60dabc1c_a3.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "靴子",
+    "raw_type": "黑白拼色绑带短靴",
+    "color": [
+      "黑色",
+      "白色"
+    ],
+    "style": [
+      "街头",
+      "工装",
+      "朋克"
+    ],
+    "season": [
+      "秋",
+      "冬",
+      "春"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑白拼色系带短靴，搭配宽绑带与厚底设计，皮革感挺括",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/0866c366-4773-492d-b0f1-dd72b5a52764_a3.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "运动鞋",
+    "raw_type": "卡其色麂皮运动休闲鞋",
+    "color": [
+      "卡其色"
+    ],
+    "style": [
+      "休闲",
+      "运动"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "卡其色麂皮运动休闲鞋，复古鞋型，柔软舒适",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/886756e9-650c-46fb-a92c-2cf2fdd28ebd_a2.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "平底鞋",
+    "raw_type": "银色方头玛丽珍平底鞋",
+    "color": [
+      "银色"
+    ],
+    "style": [
+      "法式",
+      "优雅",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银色方头玛丽珍平底鞋，细带设计，光面皮革质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b811348a-c72e-4936-825b-ef271ea03b7c_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "靴子",
+    "raw_type": "米色镂空高筒靴",
+    "color": [
+      "米色"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色镂空高筒靴，雕花透气，麂皮柔软质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/599f87d2-3d08-4e9d-9bba-2c748dc6868b_a2.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "平底鞋",
+    "raw_type": "黄色格纹蝴蝶结平底鞋",
+    "color": [
+      "黄色格纹",
+      "黑色",
+      "棕色"
+    ],
+    "style": [
+      "复古",
+      "学院",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黄色格纹平底鞋，方头设计搭配细绳蝴蝶结，复古感明显",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/14aaed5b-faef-4629-9b2b-922f20f24bf2_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "高跟鞋",
+    "raw_type": "红色尖头细跟高跟鞋",
+    "color": [
+      "红色"
+    ],
+    "style": [
+      "优雅",
+      "性感",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "红色尖头细跟高跟鞋，光滑亮面皮革，优雅性感风格",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b059cb40-8df3-4db4-ae6c-0f276b0be5d7_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "运动鞋",
+    "raw_type": "粉色软面料运动鞋",
+    "color": [
+      "粉色"
+    ],
+    "style": [
+      "休闲",
+      "运动"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "粉色软面料运动鞋，圆头设计，轻便舒适",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/66e200f9-5f7d-4d37-801b-7acabd56f5a5_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "乐福鞋",
+    "raw_type": "深棕色麂皮乐福鞋",
+    "color": [
+      "深棕色"
+    ],
+    "style": [
+      "复古",
+      "休闲",
+      "通勤",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色麂皮乐福鞋，简约套脚设计，鞋面带复古做旧纹理",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/8445fdf2-7d5f-4cda-8595-17d16fb1f8bf_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "凉鞋",
+    "raw_type": "棕色镂空尖头穆勒鞋",
+    "color": [
+      "棕色"
+    ],
+    "style": [
+      "复古",
+      "优雅",
+      "度假"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "棕色尖头穆勒凉鞋，镂空雕花鞋面，带复古质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/345c85e6-ee17-45fb-bce9-3ffcdf793b99_a1.png"
+  },
+  {
+    "category": "鞋履",
+    "type": "运动鞋",
+    "raw_type": "黑白拼接厚底运动鞋",
+    "color": [
+      "米白",
+      "黑色",
+      "浅灰"
+    ],
+    "style": [
+      "休闲",
+      "运动",
+      "韩系",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白黑色拼接厚底运动鞋，菱格鞋面设计，休闲街头感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/232aae5d-9d8f-49d7-a1bc-6b523747ea21_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "浅粉色蝴蝶结手提包",
+    "color": [
+      "浅粉色"
+    ],
+    "style": [
+      "甜美",
+      "优雅",
+      "韩系"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "浅粉色荔枝纹手提包，镂空提手搭配立体蝴蝶结装饰",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/9c15b300-852b-4c2b-98a8-0f0024fc591b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "深棕色荔枝纹手提包",
+    "color": [
+      "深棕色"
+    ],
+    "style": [
+      "通勤",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色荔枝纹手提包，简约极简设计，皮革质感细腻",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/4326f58c-0b0a-4251-8ced-e40ac76ca49b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "黑色蛇纹圆筒腋下包",
+    "color": [
+      "黑色",
+      "棕色"
+    ],
+    "style": [
+      "复古",
+      "港风",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色亮面蛇纹圆筒腋下包，搭配毛绒挂饰，复古感强",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/85a1c656-9169-4d50-988b-2bfb5df6797b_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "银紫色亮片腋下包",
+    "color": [
+      "银紫色"
+    ],
+    "style": [
+      "甜美",
+      "复古",
+      "韩系"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "银紫色亮片腋下包，弯月包型设计，表面密集闪耀亮片",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6af79d87-05ce-46cc-bda8-693c3b7e9fed_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "深棕色编织单肩水桶包",
+    "color": [
+      "深棕色"
+    ],
+    "style": [
+      "复古",
+      "极简",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "深棕色编织水桶包，细肩带设计，皮革质感复古低调",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/d10f4bc0-cfa7-4c4f-bb38-29c3e77553a2_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "豹纹圆筒手提包",
+    "color": [
+      "卡其色豹纹"
+    ],
+    "style": [
+      "复古",
+      "街头"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "卡其色豹纹圆筒手提包，长肩带设计，绒面质感挺括有型",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/c7923669-0139-4303-b0d6-7a72ef0a57d9_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "米色编织单肩包",
+    "color": [
+      "米色"
+    ],
+    "style": [
+      "休闲",
+      "度假",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米色编织单肩包，简约设计，仿皮与编织材质结合",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/bba038e9-8f32-4c77-9015-cf461c521df5_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "焦糖色翻盖手提包",
+    "color": [
+      "焦糖棕"
+    ],
+    "style": [
+      "极简",
+      "通勤",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "焦糖色极简手提包，梯形包身搭配金属扣饰，仿麂皮质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b318f2e1-1ccf-41c4-b230-5a8a4a6a34b7_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "黑色菱格链条肩背包",
+    "color": [
+      "黑色"
+    ],
+    "style": [
+      "街头",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色菱格链条肩背包，软质绗缝皮革，休闲街头风",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/dc81e1c6-a13a-4e67-8aca-30c102cc0f14_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "黑色手提拉链包",
+    "color": [
+      "黑色"
+    ],
+    "style": [
+      "极简",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色手提拉链包，简约极简设计，PU革材质略挺括",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/2a48e269-275e-4b1d-8a63-2ae766c13a9e_a3.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "棕色铆钉手提包",
+    "color": [
+      "棕色",
+      "金色"
+    ],
+    "style": [
+      "复古",
+      "通勤",
+      "优雅"
+    ],
+    "season": [
+      "春",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "棕色复古手提包，金属铆钉点缀，柔软皮质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/f552ab3a-6bab-4740-a92d-b21118f3f39b_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "米白色手提皮质小包",
+    "color": [
+      "米白色"
+    ],
+    "style": [
+      "通勤",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白色手提皮质小包，简约设计，挺括牛皮材质",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/b9a970e9-118f-4008-9c22-43698c74d976_a3.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "浅黄色迷你波士顿斜挎包",
+    "color": [
+      "浅黄"
+    ],
+    "style": [
+      "极简",
+      "韩系",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "浅黄色迷你波士顿包，双提手配可调节肩带，荔枝纹皮革质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/89105d87-68b0-4fb6-b5fd-79f6b4fc7c76_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "浅灰色皮质手提包",
+    "color": [
+      "浅灰色"
+    ],
+    "style": [
+      "极简",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "浅灰色颗粒纹皮质手提包，简约设计，通勤百搭",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/21179c12-eca0-44ad-a672-676a0bcb1c8c_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "米白色帆布手提包",
+    "color": [
+      "米白",
+      "深棕"
+    ],
+    "style": [
+      "极简",
+      "通勤",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白色粗织帆布手提包，深棕皮革提手，整体简约挺括",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/83c41cd2-0801-45e2-a201-9e11abab3870_a2.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "奶油黄色菱格腋下包",
+    "color": [
+      "奶油黄"
+    ],
+    "style": [
+      "甜美",
+      "韩系",
+      "休闲"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "奶油黄色绗缝腋下包，圆弧包型，菱格纹设计柔软蓬松",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/7fea5b6f-f0fd-4f9c-980a-27440617aa93_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "米白色黑色波点手提包",
+    "color": [
+      "白底黑色波点"
+    ],
+    "style": [
+      "休闲",
+      "法式"
+    ],
+    "season": [
+      "春",
+      "夏"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白底黑色波点手提包，帆布材质，轻薄挺括休闲风",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/0649a7d2-9b2e-4ea9-9094-5e23b4eac5ce_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "米白色羊羔绒手提包",
+    "color": [
+      "米白"
+    ],
+    "style": [
+      "韩系",
+      "甜美",
+      "休闲"
+    ],
+    "season": [
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "米白色羊羔绒手提包，短肩带设计，整体蓬松柔软",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/6979245f-73ca-4bf5-8901-5ddb56a0619f_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "绿色编织腋下包",
+    "color": [
+      "橄榄绿"
+    ],
+    "style": [
+      "韩系",
+      "休闲",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "橄榄绿色编织腋下包，柔软包身，手工编织纹理明显",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/2d5ed627-3713-406c-9a8f-cfff4e0e0e9a_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "灰色编织单肩包",
+    "color": [
+      "灰色"
+    ],
+    "style": [
+      "休闲",
+      "极简"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "灰色编织单肩包，简约休闲，纱线材质有结构感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/e581eb99-dbfb-46e0-b066-3fef051ff0e7_a1.png"
+  },
+  {
+    "category": "配件",
+    "type": "包",
+    "raw_type": "黑色极简单肩托特包",
+    "color": [
+      "黑色"
+    ],
+    "style": [
+      "极简",
+      "休闲",
+      "通勤"
+    ],
+    "season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "warmth": "不适用",
+    "fit": "不适用",
+    "description": "黑色大容量单肩托特包，流线水滴廓形，柔软垂坠质感",
+    "image": "/Users/sunyidan/Desktop/Relty_intern/Wardrobe/data_parsein/whites/d730464e-246a-4929-b857-e5af8e5f603f_a1.png"
+  }
+]

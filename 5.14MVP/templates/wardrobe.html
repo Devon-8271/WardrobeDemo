@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}衣橱 — Fashion Agent{% endblock %}
+
+{% block extra_style %}
+/* ── Count badge ──────────────────────────────────────────────────────────── */
+.count { font-size: 12px; color: var(--c-text-mute); margin-left: 3px; }
+
+/* ── Grid header ──────────────────────────────────────────────────────────── */
+.grid-header { padding: 12px 16px 4px; font-size: 13px; color: var(--c-text-sub); }
+
+/* ── Item card ────────────────────────────────────────────────────────────── */
+.item-card {
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+.item-card:hover  { transform: scale(1.02); }
+.item-card:active { transform: scale(0.98); }
+
+.item-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-img img { width: 100%; height: 100%; object-fit: cover; }
+.item-img.placeholder span { font-size: 12px; color: var(--c-text-mute); padding: 0 8px; text-align: center; }
+
+/* ── Beautify badge ───────────────────────────────────────────────────────── */
+.beautify-badge {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border-radius: 20px;
+  padding: 3px 8px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Item info ────────────────────────────────────────────────────────────── */
+.item-info  { padding: 8px 10px 10px; }
+.item-type  { font-size: 13px; font-weight: 500; color: var(--c-primary); }
+.item-color { font-size: 11px; color: var(--c-text-sub); margin-top: 2px; }
+.cat-dot    { width: 6px; height: 6px; border-radius: 50%;
+              display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+/* ── Detail modal ─────────────────────────────────────────────────────────── */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+            z-index: 200; align-items: flex-end; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--c-surface); border-radius: 20px 20px 0 0;
+         padding: 24px 20px calc(40px + env(safe-area-inset-bottom));
+         width: 100%; max-width: 560px; margin: 0 auto; }
+.modal-img { width: 100%; max-height: 420px; object-fit: contain;
+             border-radius: 12px; margin-bottom: 16px; background: #f0f0f0;
+             display: block; }
+.modal-img.placeholder-large { height: 160px; display: flex; align-items: center;
+                                justify-content: center; color: var(--c-text-mute); font-size: 14px; }
+.modal h2   { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+.tag-row    { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tag        { background: #f0f0f0; border-radius: 20px; padding: 4px 10px;
+              font-size: 12px; color: #444; }
+.modal-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 20px; }
+.modal-close  { width: 100%; background: var(--c-bg); border: none; border-radius: 12px;
+                padding: 12px; font-size: 14px; cursor: pointer; color: var(--c-primary); }
+.modal-close:hover { background: var(--c-border); }
+.modal-delete { width: 100%; background: none; border: none; color: #c0392b;
+                font-size: 13px; cursor: pointer; padding: 10px; margin-top: 4px; }
+
+/* ── Select mode ──────────────────────────────────────────────────────────── */
+.item-card.selected::after {
+  content: "✓";
+  position: absolute; inset: 0;
+  background: rgba(74,144,217,.18);
+  border: 2.5px solid var(--c-primary);
+  border-radius: var(--r-card);
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  padding: 8px; font-size: 18px; color: var(--c-primary); font-weight: 700;
+}
+.select-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  display: none; gap: 10px; align-items: center;
+  z-index: 100;
+}
+.select-bar.visible { display: flex; }
+.select-bar-count { flex: 1; font-size: 14px; color: var(--c-text-sub); }
+.select-bar-save {
+  padding: 10px 24px; border-radius: 12px;
+  background: var(--c-primary); color: #fff; border: none;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+}
+.select-bar-save:disabled { opacity: .5; }
+
+/* ── Save-as-look sheet (reuse same classes as looks.html) ─────────────────── */
+.sheet-row   { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.sheet-label { font-size: 13px; color: var(--c-text-sub); }
+.scene-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.scene-pill  {
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer;
+  border: 1.5px solid var(--c-border); background: none; color: var(--c-text-primary);
+  transition: all .15s;
+}
+.scene-pill.active { border-color: var(--c-primary); background: var(--c-primary); color: #fff; }
+{% endblock %}
+
+{% block header %}
+<header class="page-header">
+  <a class="back-btn" href="/">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    返回
+  </a>
+  <span class="header-title">衣橱</span>
+  <div class="header-actions" style="display:flex;gap:8px;align-items:center">
+    <button id="select-btn" onclick="toggleSelectMode()" style="background:none;border:1.5px solid var(--c-border);border-radius:10px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--c-text-primary)">选择</button>
+    <a class="btn-primary" id="upload-btn" href="/wardrobe/upload" style="text-decoration:none">+ 上传</a>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="tab-bar" id="tabs">
+  <button class="tab-item active" data-cat="">全部<span class="count" id="count-all"></span></button>
+  <button class="tab-item" data-cat="上装">上装<span class="count" id="count-上装"></span></button>
+  <button class="tab-item" data-cat="下装">下装<span class="count" id="count-下装"></span></button>
+  <button class="tab-item" data-cat="外套">外套<span class="count" id="count-外套"></span></button>
+  <button class="tab-item" data-cat="全身">全身<span class="count" id="count-全身"></span></button>
+  <button class="tab-item" data-cat="鞋履">鞋履<span class="count" id="count-鞋履"></span></button>
+  <button class="tab-item" data-cat="配件">配件<span class="count" id="count-配件"></span></button>
+</div>
+
+<div class="grid-header" id="grid-header"></div>
+<div class="card-grid-3" id="grid"></div>
+
+<!-- 选择模式底部操作栏 -->
+<div class="select-bar" id="select-bar">
+  <span class="select-bar-count" id="select-count">已选 0 件</span>
+  <button class="select-bar-save" id="select-save-btn" onclick="openSaveAsLookSheet()" disabled>存为今日搭配</button>
+</div>
+
+<!-- 保存为搭配弹窗 -->
+<div class="modal-bg" id="sal-sheet-bg" onclick="closeSaveAsLookSheet(event)">
+  <div class="modal" id="sal-sheet">
+    <h2 style="margin-bottom:20px">保存为搭配</h2>
+    <div class="sheet-row">
+      <span class="sheet-label">日期</span>
+      <input type="date" id="sal-date" style="font-size:14px;padding:8px 12px;border:1.5px solid var(--c-border);border-radius:10px;background:var(--c-surface);color:var(--c-text-primary);width:100%;box-sizing:border-box">
+    </div>
+    <div class="sheet-row">
+      <span class="sheet-label">场合（可选）</span>
+      <div class="scene-pills" id="sal-scenes">
+        <button class="scene-pill" data-scene="日常">日常</button>
+        <button class="scene-pill" data-scene="工作">工作</button>
+        <button class="scene-pill" data-scene="约会">约会</button>
+        <button class="scene-pill" data-scene="运动">运动</button>
+        <button class="scene-pill" data-scene="正式">正式</button>
+      </div>
+    </div>
+    <button class="modal-close" id="sal-save-btn" onclick="submitSaveAsLook()" style="background:var(--c-primary);color:#fff;margin-bottom:8px">保存</button>
+    <button class="modal-close" onclick="closeSaveAsLookSheet()">取消</button>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div id="modal-img-wrap"></div>
+    <h2 id="modal-title"></h2>
+    <div class="tag-row" id="modal-tags"></div>
+    <p class="modal-desc" id="modal-desc"></p>
+    <button class="modal-close" onclick="closeModal()">关闭</button>
+    <button class="modal-close" id="modal-beautify-btn" style="margin-top:8px;display:none">重新美化（image2）</button>
+    <button class="modal-delete" id="modal-delete-btn">从衣橱移除</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const CAT_COLORS = {
+  "上装": "#4a90d9", "下装": "#7c5cbf", "外套": "#e67e22",
+  "全身": "#27ae60", "鞋履": "#e74c3c", "配件": "#f39c12",
+};
+
+let allItems = [];
+let currentCat = "";
+let currentItemId = "";
+let selectMode = false;
+let selectedIds = new Set();
+
+async function loadItems() {
+  const url = "/api/wardrobe" + (currentCat ? `?category=${encodeURIComponent(currentCat)}` : "");
+  const r = await fetch(url);
+  const data = await r.json();
+  renderGrid(data.items);
+  document.getElementById("grid-header").textContent =
+    `共 ${data.total} 件${currentCat ? " · " + currentCat : ""}`;
+  return data.items;
+}
+
+async function loadCounts() {
+  const r = await fetch("/api/wardrobe");
+  const data = await r.json();
+  allItems = data.items;
+
+  const counts = {};
+  allItems.forEach(it => { counts[it.category] = (counts[it.category] || 0) + 1; });
+  document.getElementById("count-all").textContent = allItems.length || "";
+  ["上装","下装","外套","全身","鞋履","配件"].forEach(c => {
+    const el = document.getElementById(`count-${c}`);
+    if (el) el.textContent = counts[c] || "";
+  });
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById("grid");
+  if (!items.length) {
+    grid.innerHTML = "";
+    document.getElementById("grid-header").innerHTML =
+      `<div class="empty-state"><div class="empty-text">还没有单品，快去上传吧</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(it => {
+    const color  = CAT_COLORS[it.category] || "#999";
+    const imgSrc = it.image_url || it.image_crop_url;
+    const imgHtml = imgSrc
+      ? `<div class="item-img"><img src="${escHtml(imgSrc)}" alt="" loading="lazy"
+           onerror="this.parentElement.innerHTML='<span>${escHtml(it.type)}</span>';this.parentElement.classList.add('placeholder')"></div>`
+      : `<div class="item-img placeholder"><span>${escHtml(it.type)}</span></div>`;
+
+    const badge = it.beautifying
+      ? `<div class="beautify-badge"><span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>美化中</div>` : "";
+
+    const selected = selectedIds.has(it.item_id) ? " selected" : "";
+    return `<div class="item-card${selected}" onclick="handleCardClick('${escHtml(it.item_id)}')">
+      ${imgHtml}${badge}
+      <div class="item-info">
+        <div class="item-type">
+          <span class="cat-dot" style="background:${color}"></span>${escHtml(it.type)}
+        </div>
+        <div class="item-color">${escHtml((it.color||[]).join(" · "))}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function handleCardClick(itemId) {
+  if (selectMode) { toggleSelectItem(itemId); } else { openModal(itemId); }
+}
+
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  selectedIds.clear();
+  const btn = document.getElementById("select-btn");
+  const uploadBtn = document.getElementById("upload-btn");
+  if (selectMode) {
+    btn.textContent = "取消";
+    btn.style.borderColor = "var(--c-primary)";
+    btn.style.color = "var(--c-primary)";
+    uploadBtn.style.display = "none";
+  } else {
+    btn.textContent = "选择";
+    btn.style.borderColor = "";
+    btn.style.color = "";
+    uploadBtn.style.display = "";
+    document.getElementById("select-bar").classList.remove("visible");
+  }
+  renderGrid(allItems.filter(it => !currentCat || it.category === currentCat));
+}
+
+function toggleSelectItem(itemId) {
+  if (selectedIds.has(itemId)) { selectedIds.delete(itemId); }
+  else { selectedIds.add(itemId); }
+  const n = selectedIds.size;
+  document.getElementById("select-count").textContent = `已选 ${n} 件`;
+  document.getElementById("select-save-btn").disabled = n === 0;
+  document.getElementById("select-bar").classList.toggle("visible", n > 0 || selectMode);
+  // 更新卡片选中状态
+  document.querySelectorAll(".item-card").forEach(card => {
+    const id = card.getAttribute("onclick")?.match(/'([^']+)'/)?.[1];
+    if (id) card.classList.toggle("selected", selectedIds.has(id));
+  });
+}
+
+function openSaveAsLookSheet() {
+  document.getElementById("sal-date").value = new Date().toISOString().slice(0,10);
+  document.querySelectorAll("#sal-scenes .scene-pill").forEach(p => p.classList.remove("active"));
+  document.getElementById("sal-sheet-bg").classList.add("open");
+}
+
+function closeSaveAsLookSheet(e) {
+  if (e && e.target !== document.getElementById("sal-sheet-bg")) return;
+  document.getElementById("sal-sheet-bg").classList.remove("open");
+}
+
+document.getElementById("sal-scenes").addEventListener("click", e => {
+  const pill = e.target.closest(".scene-pill");
+  if (!pill) return;
+  const wasActive = pill.classList.contains("active");
+  document.querySelectorAll("#sal-scenes .scene-pill").forEach(p => p.classList.remove("active"));
+  if (!wasActive) pill.classList.add("active");
+});
+
+async function submitSaveAsLook() {
+  const btn = document.getElementById("sal-save-btn");
+  btn.disabled = true;
+  btn.textContent = "保存中…";
+  try {
+    const scene = document.querySelector("#sal-scenes .scene-pill.active")?.dataset.scene || "";
+    const date  = document.getElementById("sal-date").value;
+    await fetch("/api/looks", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ item_ids: [...selectedIds], date, scene }),
+    });
+    document.getElementById("sal-sheet-bg").classList.remove("open");
+    toggleSelectMode();  // 退出选择模式
+    alert("搭配已保存！");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "保存";
+  }
+}
+
+function openModal(itemId) {
+  const it = allItems.find(i => i.item_id === itemId);
+  if (!it) return;
+  currentItemId = itemId;
+
+  const imgSrc = it.image_url || it.image_crop_url;
+  document.getElementById("modal-img-wrap").innerHTML = imgSrc
+    ? `<img class="modal-img" src="${escHtml(imgSrc)}" alt="">`
+    : `<div class="modal-img placeholder-large">${escHtml(it.type)}</div>`;
+
+  document.getElementById("modal-title").textContent = it.type;
+
+  const tags = [
+    ...(it.color  || []).map(c => `<span class="tag">${escHtml(c)}</span>`),
+    ...(it.style  || []).map(s => `<span class="tag">${escHtml(s)}</span>`),
+    ...(it.season || []).map(s => `<span class="tag">${escHtml(s)}</span>`),
+    it.warmth && it.warmth !== "不适用" ? `<span class="tag">${escHtml(it.warmth)}</span>` : "",
+    it.fit    && it.fit    !== "不适用" ? `<span class="tag">${escHtml(it.fit)}</span>`    : "",
+  ].filter(Boolean);
+  document.getElementById("modal-tags").innerHTML = tags.join("");
+  document.getElementById("modal-desc").textContent = it.description || "";
+
+  // 未美化（image_url 含原始 uuid hex 文件名而非 beautify_ 前缀）且有图：显示重新美化按钮
+  const beautifyBtn = document.getElementById("modal-beautify-btn");
+  const isBeautified = imgSrc && imgSrc.includes("/beautify_");
+  beautifyBtn.style.display = (imgSrc && !isBeautified && !it.beautifying) ? "block" : "none";
+
+  document.getElementById("modal-bg").classList.add("open");
+}
+
+document.getElementById("modal-beautify-btn").addEventListener("click", async () => {
+  if (!currentItemId) return;
+  const btn = document.getElementById("modal-beautify-btn");
+  btn.disabled = true;
+  btn.textContent = "已触发，约 1-5 分钟…";
+  const r = await fetch(`/api/wardrobe/${currentItemId}/beautify`, { method: "POST" });
+  const data = await r.json();
+  if (data.ok) {
+    document.getElementById("modal-bg").classList.remove("open");
+    await loadCounts();
+    await loadItems();
+    schedulePoll();
+  } else {
+    btn.disabled = false;
+    btn.textContent = "重新美化（image2）";
+    alert(data.error || "触发失败");
+  }
+});
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById("modal-bg")) return;
+  document.getElementById("modal-bg").classList.remove("open");
+  currentItemId = "";
+}
+
+document.getElementById("modal-delete-btn").addEventListener("click", async () => {
+  if (!currentItemId) return;
+  if (!confirm("确认从衣橱移除这件单品？")) return;
+  const r = await fetch(`/api/wardrobe/${currentItemId}`, { method: "DELETE" });
+  if ((await r.json()).ok) {
+    document.getElementById("modal-bg").classList.remove("open");
+    await loadCounts();
+    await loadItems();
+  }
+});
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const tab = e.target.closest(".tab-item");
+  if (!tab) return;
+  document.querySelectorAll(".tab-item").forEach(t => t.classList.remove("active"));
+  tab.classList.add("active");
+  currentCat = tab.dataset.cat;
+  loadItems().then(schedulePoll);
+});
+
+function escHtml(s) {
+  return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+let _pollTimer = null;
+function schedulePoll() {
+  clearTimeout(_pollTimer);
+  if (allItems.some(it => it.beautifying)) {
+    _pollTimer = setTimeout(async () => { await loadCounts(); await loadItems(); }, 8000);
+  }
+}
+
+loadCounts().then(async () => { await loadItems(); schedulePoll(); });
+</script>
+{% endblock %}

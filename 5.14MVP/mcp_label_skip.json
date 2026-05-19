@@ -1,0 +1,14 @@
+{
+  "nas://数据采集/包包/2026-05-14 220423.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x103a5c0d0>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220456.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x103a5cd60>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220504.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x103a47a00>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220514.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1023b80d0>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220533.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1023b8d30>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220543.jpg": "HTTPConnectionPool(host='192.168.31.113', port=9001): Max retries exceeded with url: /mcp (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1023e19d0>: Failed to establish a new connection: [Errno 60] Operation timed out'))",
+  "nas://数据采集/包包/2026-05-14 220553.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp",
+  "nas://数据采集/包包/2026-05-14 220602.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp",
+  "nas://数据采集/包包/2026-05-14 220622.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp",
+  "nas://数据采集/包包/2026-05-14 220635.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp",
+  "nas://数据采集/包包/2026-05-14 220649.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp",
+  "nas://数据采集/包包/2026-05-14 220700.jpg": "406 Client Error: Not Acceptable for url: http://192.168.31.113:9001/mcp"
+}

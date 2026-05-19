@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上传单品 — Fashion Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         background: #f5f5f5; min-height: 100vh; }
+
+  .header { background: #fff; border-bottom: 1px solid #e8e8e8;
+            padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+  .header a { font-size: 14px; color: #555; text-decoration: none; }
+  .header a:hover { color: #000; }
+  .header h1 { font-size: 17px; font-weight: 600; }
+
+  .container { max-width: 560px; margin: 32px auto; padding: 0 20px 100px; }
+
+  .card { background: #fff; border-radius: 14px; padding: 24px;
+          box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 20px; }
+  .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+
+  /* 上传区 */
+  .drop-zone { border: 2px dashed #d0d0d0; border-radius: 12px; padding: 36px 20px;
+               text-align: center; cursor: pointer; transition: border-color .2s; }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: #999; background: #fafafa; }
+  .drop-zone input { display: none; }
+  .drop-zone p { font-size: 14px; color: #888; margin-top: 8px; }
+  .preview-img { max-width: 100%; max-height: 240px; border-radius: 10px;
+                 margin-top: 12px; display: none; }
+
+  .status { font-size: 13px; color: #888; margin-top: 10px; min-height: 20px; }
+  .status.error { color: #c0392b; }
+
+  /* 识别结果区 */
+  #results-section { display: none; }
+
+  /* 试穿结果 */
+  .tryon-result-wrap { display: none; margin-bottom: 16px; }
+  .tryon-result-img  { width: 100%; border-radius: 10px; display: block; }
+  .tryon-hint        { font-size: 12px; color: #888; text-align: center; margin: 8px 0 12px; }
+  .tryon-actions     { display: flex; flex-direction: column; gap: 8px; }
+
+  /* 单品卡片 */
+  .item-card { border: 1px solid #e8e8e8; border-radius: 12px; padding: 16px;
+               margin-bottom: 14px; background: #fafafa; transition: border-color .15s; }
+  .item-card.checked { border-color: #1a1a1a; background: #fff; }
+
+  .item-check-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; }
+  .item-check-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #1a1a1a;
+                                          cursor: pointer; flex-shrink: 0; }
+  .item-check-row h3 { margin: 0; font-size: 14px; font-weight: 600; color: #333; }
+
+  .field { margin-bottom: 10px; }
+  .field label { font-size: 12px; color: #888; display: block; margin-bottom: 4px; }
+  .field input, .field select, .field textarea {
+    width: 100%; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 7px 10px; font-size: 13px; font-family: inherit; outline: none;
+    background: #fff;
+  }
+  .field input:focus, .field select:focus { border-color: #aaa; }
+  .field textarea { resize: vertical; min-height: 52px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .saved-badge { display: inline-block; background: #e8f5e9; color: #2e7d32;
+                 border-radius: 20px; padding: 4px 12px; font-size: 12px; margin-top: 8px; }
+
+  /* 按钮 */
+  .confirm-btn { width: 100%; background: #1a1a1a; color: #fff; border: none;
+                 border-radius: 10px; padding: 11px; font-size: 14px; cursor: pointer; }
+  .confirm-btn:hover { background: #333; }
+  .confirm-btn:disabled { background: #ccc; cursor: default; }
+  .dismiss-btn { width: 100%; background: #fff; color: #888; border: 1.5px solid #ddd;
+                 border-radius: 10px; padding: 10px; font-size: 14px; cursor: pointer; }
+  .dismiss-btn:hover { background: #f9f9f9; }
+
+  #upload-btn { width: 100%; background: #1a1a1a; color: #fff; border: none;
+                border-radius: 10px; padding: 12px; font-size: 14px; cursor: pointer;
+                display: none; margin-top: 12px; }
+  #upload-btn:hover { background: #333; }
+  #upload-btn:disabled { background: #ccc; cursor: default; }
+
+  /* 底部全局操作栏 */
+  .bottom-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0;
+                background: #fff; border-top: 1px solid #e8e8e8;
+                padding: 12px 20px; z-index: 200;
+                box-shadow: 0 -2px 12px rgba(0,0,0,.07); }
+  .bottom-bar-inner { max-width: 560px; margin: 0 auto;
+                      display: flex; gap: 10px; align-items: center; }
+  .bar-count { font-size: 13px; color: #888; flex-shrink: 0; }
+  .bar-btn-ghost { flex: 1; background: #fff; border: 1.5px solid #1a1a1a; color: #1a1a1a;
+                   border-radius: 10px; padding: 11px; font-size: 14px; cursor: pointer; }
+  .bar-btn-ghost:disabled { border-color: #ccc; color: #ccc; cursor: default; }
+  .bar-btn-solid { flex: 1; background: #1a1a1a; color: #fff; border: none;
+                   border-radius: 10px; padding: 11px; font-size: 14px; cursor: pointer; }
+  .bar-btn-solid:disabled { background: #ccc; cursor: default; }
+
+  .back-link { text-align: center; margin-top: 20px; }
+  .back-link a { font-size: 14px; color: #555; text-decoration: none; }
+  .back-link a:hover { color: #000; }
+
+  .spinner { width: 18px; height: 18px; border: 2px solid #e0e0e0;
+             border-top-color: #1a1a1a; border-radius: 50%;
+             animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="/">← 返回</a>
+  <h1>上传单品</h1>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>选择照片</h2>
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="image/*">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      <p>点击选择图片，或拖拽到此处</p>
+      <p style="font-size:12px;margin-top:4px;">支持 JPG / PNG，可包含多件单品</p>
+      <img id="preview-img" class="preview-img">
+    </div>
+    <button id="upload-btn">识别单品</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div id="results-section">
+    <div class="card">
+      <h2 id="results-title">识别结果</h2>
+
+      <!-- 试穿效果（生成后显示） -->
+      <div class="tryon-result-wrap" id="tryon-result-wrap">
+        <img class="tryon-result-img" id="tryon-result-img" src="" alt="试穿效果">
+        <p class="tryon-hint">试穿效果仅供参考</p>
+        <div class="tryon-actions" id="tryon-actions">
+          <button class="confirm-btn" style="background:#444" onclick="saveLookFromTryon()">加入穿搭日志</button>
+          <button class="confirm-btn" onclick="saveCheckedToWardrobe(null)">存入衣橱</button>
+          <button class="dismiss-btn" onclick="closeTryonResult()">关闭</button>
+        </div>
+      </div>
+
+      <div id="items-container"></div>
+    </div>
+  </div>
+
+  <div class="back-link"><a href="/">完成后返回</a></div>
+</div>
+
+<!-- 底部操作栏 -->
+<div class="bottom-bar" id="bottom-bar">
+  <div class="bottom-bar-inner">
+    <span class="bar-count" id="bar-count">已选 0 件</span>
+    <button class="bar-btn-ghost" id="btn-tryon" onclick="previewSelectedTryon()">上身预览</button>
+    <button class="bar-btn-solid" id="btn-save"  onclick="saveCheckedToWardrobe(null)">存入衣橱</button>
+  </div>
+</div>
+
+<script>
+const dropZone   = document.getElementById("drop-zone");
+const fileInput  = document.getElementById("file-input");
+const previewImg = document.getElementById("preview-img");
+const uploadBtn  = document.getElementById("upload-btn");
+const statusEl   = document.getElementById("status");
+
+let selectedFile   = null;
+let imagePath      = "";
+let _tryonResultUrl = "";
+let _pollTimer     = null;
+
+// ── 拖拽 / 选文件 ─────────────────────────────────────────────────────────────
+dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault(); dropZone.classList.remove("drag-over");
+  const f = e.dataTransfer.files[0];
+  if (f) setFile(f);
+});
+dropZone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", e => { if (e.target.files[0]) setFile(e.target.files[0]); });
+
+function setFile(f) {
+  selectedFile = f;
+  const reader = new FileReader();
+  reader.onload = ev => { previewImg.src = ev.target.result; previewImg.style.display = "block"; };
+  reader.readAsDataURL(f);
+  uploadBtn.style.display = "block";
+  statusEl.textContent = f.name;
+  statusEl.className = "status";
+  document.getElementById("results-section").style.display = "none";
+  document.getElementById("items-container").innerHTML = "";
+  document.getElementById("bottom-bar").style.display = "none";
+  closeTryonResult();
+}
+
+// ── 识别 ──────────────────────────────────────────────────────────────────────
+uploadBtn.addEventListener("click", async () => {
+  if (!selectedFile) return;
+  uploadBtn.disabled = true;
+  setStatus("正在识别单品，请稍候…");
+
+  const fd = new FormData();
+  fd.append("file", selectedFile);
+
+  try {
+    const r    = await fetch("/upload/wardrobe-item", { method: "POST", body: fd });
+    const data = await r.json();
+    if (!data.ok) { setStatus(data.error || "识别失败", true); uploadBtn.disabled = false; return; }
+    imagePath = data.image_path;
+    renderItems(data.items);
+    setStatus(`识别到 ${data.items.length} 件单品，勾选后统一操作`);
+    document.getElementById("results-section").style.display = "block";
+    updateBottomBar();
+  } catch (e) {
+    setStatus("请求失败：" + e.message, true);
+  }
+  uploadBtn.disabled = false;
+});
+
+// ── 渲染单品卡片（含勾选框，无独立按钮）────────────────────────────────────────
+function renderItems(items) {
+  const container = document.getElementById("items-container");
+  container.innerHTML = "";
+  items.forEach((item, idx) => {
+    const div = document.createElement("div");
+    div.className = "item-card checked";
+    div.id = `item-${idx}`;
+    div.innerHTML = `
+      <label class="item-check-row">
+        <input type="checkbox" class="item-check" data-idx="${idx}" checked
+               onchange="onCheckChange(this)">
+        <h3>单品 ${idx + 1}：${escHtml(item.type)}</h3>
+      </label>
+      <div class="field">
+        <label>品类</label>
+        <select name="category">
+          ${["上装","下装","全身","外套","鞋履","配件"].map(c =>
+            `<option value="${c}" ${c===item.category?"selected":""}>${c}</option>`
+          ).join("")}
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>具体类型</label>
+          <input name="type" value="${escHtml(item.type)}">
+        </div>
+        <div class="field">
+          <label>颜色（逗号分隔）</label>
+          <input name="color" value="${escHtml((item.color||[]).join(","))}">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>风格（逗号分隔）</label>
+          <input name="style" value="${escHtml((item.style||[]).join(","))}">
+        </div>
+        <div class="field">
+          <label>季节（逗号分隔）</label>
+          <input name="season" value="${escHtml((item.season||[]).join(","))}">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>厚薄</label>
+          <select name="warmth">
+            ${["薄","中等","厚","不适用"].map(w =>
+              `<option value="${w}" ${w===item.warmth?"selected":""}>${w}</option>`
+            ).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>版型</label>
+          <select name="fit">
+            ${["修身","常规","宽松","oversize","不适用"].map(f =>
+              `<option value="${f}" ${f===item.fit?"selected":""}>${f}</option>`
+            ).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>描述</label>
+        <textarea name="description">${escHtml(item.description||"")}</textarea>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function onCheckChange(cb) {
+  const idx  = parseInt(cb.dataset.idx);
+  const card = document.getElementById(`item-${idx}`);
+  card.classList.toggle("checked", cb.checked);
+  updateBottomBar();
+}
+
+function updateBottomBar() {
+  const n = document.querySelectorAll(".item-check:checked").length;
+  document.getElementById("bar-count").textContent = `已选 ${n} 件`;
+  document.getElementById("btn-tryon").disabled = n === 0;
+  document.getElementById("btn-save").disabled  = n === 0;
+  document.getElementById("bottom-bar").style.display = n > 0 ? "block" : "none";
+}
+
+// 读取所有勾选单品的表单数据
+function getCheckedItems() {
+  return Array.from(document.querySelectorAll(".item-check:checked")).map(cb => {
+    const idx  = parseInt(cb.dataset.idx);
+    const card = document.getElementById(`item-${idx}`);
+    const get  = name => card.querySelector(`[name="${name}"]`).value.trim();
+    return {
+      category:    get("category"),
+      type:        get("type"),
+      color:       get("color").split(",").map(x => x.trim()).filter(Boolean),
+      style:       get("style").split(",").map(x => x.trim()).filter(Boolean),
+      season:      get("season").split(",").map(x => x.trim()).filter(Boolean),
+      warmth:      get("warmth"),
+      fit:         get("fit"),
+      description: get("description"),
+    };
+  });
+}
+
+// ── 统一上身预览 ───────────────────────────────────────────────────────────────
+async function previewSelectedTryon() {
+  const items = getCheckedItems();
+  if (!items.length) return;
+
+  const btn = document.getElementById("btn-tryon");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>`;
+
+  closeTryonResult();
+
+  try {
+    const r = await fetch("/api/tasks/preview-tryon", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ image_path: imagePath, items }),
+    });
+    const data = await r.json();
+    if (!data.ok) { btn.disabled = false; btn.textContent = "上身预览"; alert(data.error || "预览失败"); return; }
+    pollTryon(data.task_id, btn);
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = "上身预览";
+    alert("请求失败：" + e.message);
+  }
+}
+
+function pollTryon(taskId, btn) {
+  if (_pollTimer) clearTimeout(_pollTimer);
+  _fetchTryon(taskId, btn);
+}
+
+async function _fetchTryon(taskId, btn) {
+  try {
+    const r    = await fetch(`/api/tasks/${taskId}`);
+    const data = await r.json();
+    if (!data.ok || data.status === "failed") {
+      btn.disabled = false; btn.textContent = "上身预览";
+      alert(data.error?.message || "试穿生成失败，请重试");
+      return;
+    }
+    if (data.status === "completed") {
+      _tryonResultUrl = data.result_url;
+      showTryonResult(data.result_url);
+      btn.disabled = false; btn.textContent = "上身预览";
+      return;
+    }
+  } catch (_) {}
+  _pollTimer = setTimeout(() => _fetchTryon(taskId, btn), 5000);
+}
+
+function showTryonResult(url) {
+  const wrap = document.getElementById("tryon-result-wrap");
+  document.getElementById("tryon-result-img").src = url;
+  wrap.style.display = "block";
+  wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeTryonResult() {
+  document.getElementById("tryon-result-wrap").style.display = "none";
+  document.getElementById("tryon-result-img").src = "";
+  _tryonResultUrl = "";
+}
+
+// ── 统一存入衣橱 ───────────────────────────────────────────────────────────────
+// 返回 Promise<string[]> — 成功入库的 item_id 列表
+async function _saveCheckedItems(btn) {
+  const checks = Array.from(document.querySelectorAll(".item-check:checked"));
+  const ids = [];
+  for (const cb of checks) {
+    const idx  = parseInt(cb.dataset.idx);
+    const card = document.getElementById(`item-${idx}`);
+    const get  = name => card.querySelector(`[name="${name}"]`).value.trim();
+    const toJson = s => JSON.stringify(s.split(",").map(x => x.trim()).filter(Boolean));
+
+    const fd = new FormData();
+    fd.append("image_path",  imagePath);
+    fd.append("category",    get("category"));
+    fd.append("type",        get("type"));
+    fd.append("color",       toJson(get("color")));
+    fd.append("style",       toJson(get("style")));
+    fd.append("season",      toJson(get("season")));
+    fd.append("warmth",      get("warmth"));
+    fd.append("fit",         get("fit"));
+    fd.append("description", get("description"));
+
+    try {
+      const r    = await fetch("/confirm/wardrobe-item", { method: "POST", body: fd });
+      const data = await r.json();
+      if (data.ok) {
+        ids.push(data.item_id);
+        // 标记该卡片为已保存
+        const badge = document.createElement("div");
+        badge.className = "saved-badge";
+        badge.textContent = `✓ 已入库：${data.type}`;
+        card.appendChild(badge);
+        cb.disabled = true;
+        card.style.opacity = "0.6";
+        card.style.pointerEvents = "none";
+      }
+    } catch (_) {}
+  }
+  return ids;
+}
+
+async function saveCheckedToWardrobe(btn) {
+  const savBtn = btn || document.getElementById("btn-save");
+  savBtn.disabled = true;
+  savBtn.textContent = "保存中…";
+  const ids = await _saveCheckedItems(savBtn);
+  savBtn.textContent = "存入衣橱";
+  updateBottomBar();
+  if (ids.length) setStatus(`✓ 已存入 ${ids.length} 件`);
+}
+
+// ── 加入穿搭日志（存衣橱 + 存 look）─────────────────────────────────────────────
+async function saveLookFromTryon() {
+  const actionsEl = document.getElementById("tryon-actions");
+  actionsEl.innerHTML = `<div style="text-align:center;padding:10px"><span class="spinner"></span> 保存中…</div>`;
+
+  const ids = await _saveCheckedItems(null);
+  if (!ids.length) {
+    actionsEl.innerHTML = `<p style="color:#c0392b;font-size:13px;text-align:center">保存单品失败，请重试</p>`;
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const r = await fetch("/api/looks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_ids: ids, photo_url: _tryonResultUrl, date: today, scene: "", user_id: "default" }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      actionsEl.innerHTML = `<p style="color:#2e7d32;font-size:13px;text-align:center;padding:8px 0">✓ 已存入衣橱 + 穿搭日志</p>`;
+      updateBottomBar();
+    } else {
+      actionsEl.innerHTML = `<p style="color:#c0392b;font-size:13px;text-align:center">日志保存失败</p>`;
+    }
+  } catch (e) {
+    actionsEl.innerHTML = `<p style="color:#c0392b;font-size:13px;text-align:center">请求失败：${escHtml(e.message)}</p>`;
+  }
+}
+
+// ── 工具 ──────────────────────────────────────────────────────────────────────
+function setStatus(msg, isError) {
+  statusEl.textContent = msg;
+  statusEl.className = "status" + (isError ? " error" : "");
+}
+
+function escHtml(s) {
+  return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+</script>
+</body>
+</html>

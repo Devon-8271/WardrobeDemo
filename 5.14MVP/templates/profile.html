@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}我的形象 — Fashion Agent{% endblock %}
+
+{% block extra_style %}
+.profile-wrap {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--c-text-sub);
+  line-height: 1.5;
+}
+
+.empty-photos {
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-card);
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--c-text-sub);
+  font-size: 13px;
+  background: var(--c-surface);
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.photo-card {
+  position: relative;
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .15s;
+}
+.photo-card:hover { transform: scale(1.01); }
+.photo-card.is-key { border-color: var(--c-primary); }
+
+.photo-card img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  display: block;
+  background: #f0f0f0;
+}
+
+.key-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: var(--c-primary);
+  color: #fff;
+  border-radius: 10px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.photo-actions {
+  position: absolute;
+  top: 6px; right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.photo-action-btn {
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.photo-action-btn:hover { background: rgba(0,0,0,.75); }
+.photo-action-btn.danger { background: rgba(192,57,43,.85); }
+
+.photo-meta {
+  padding: 6px 10px 8px;
+  font-size: 11px;
+  color: var(--c-text-sub);
+}
+
+.upload-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.upload-row label {
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0,0,0,.85);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 22px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 300;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+{% endblock %}
+
+{% block header %}
+<header class="page-header">
+  <a class="back-btn" href="/">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    返回
+  </a>
+  <span class="header-title">我的形象</span>
+  <div class="header-actions"></div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrap">
+  <div class="hint">
+    全身照用于生成试穿效果图。建议正面 · 自然光 · 纯色背景 · 全身入镜。<br>
+    可以保存多张，<b>带标记的是主照</b>，点其他照片可切换主照。
+  </div>
+
+  <div id="photos-area"></div>
+
+  <div class="upload-row">
+    <label class="btn-primary">
+      <span id="upload-label">上传新照片</span>
+      <input type="file" id="photo-input" accept="image/*" style="display:none">
+    </label>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let _toastTimer = null;
+function toast(msg, ms = 2000) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove("show"), ms);
+}
+
+function escHtml(s) {
+  return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function formatTime(iso) {
+  if (!iso) return "";
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${parseInt(m[2])}月${parseInt(m[3])}日` : "";
+}
+
+async function loadPhotos() {
+  const r = await fetch("/api/photos");
+  const data = await r.json();
+  const area = document.getElementById("photos-area");
+
+  if (!data.photos.length) {
+    area.innerHTML = `<div class="empty-photos">还没有上传全身照<br>点击下方按钮上传第一张</div>`;
+    return;
+  }
+
+  area.innerHTML = `<div class="photos-grid">${
+    data.photos.map(p => `
+      <div class="photo-card ${p.is_key ? "is-key" : ""}" data-filename="${escHtml(p.filename)}">
+        <img src="${escHtml(p.url)}" alt="">
+        ${p.is_key ? `<div class="key-badge">主照</div>` : ""}
+        <div class="photo-actions">
+          ${!p.is_key ? `<button class="photo-action-btn" data-action="set-key">设为主照</button>` : ""}
+          <button class="photo-action-btn danger" data-action="delete">删除</button>
+        </div>
+        <div class="photo-meta">上传于 ${escHtml(formatTime(p.uploaded_at))}</div>
+      </div>
+    `).join("")
+  }</div>`;
+}
+
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".photo-action-btn");
+  if (!btn) return;
+  e.stopPropagation();
+  const card = btn.closest(".photo-card");
+  const filename = card?.dataset?.filename;
+  if (!filename) return;
+
+  if (btn.dataset.action === "set-key") {
+    const fd = new FormData();
+    fd.append("filename", filename);
+    const r = await fetch("/api/photos/key", {method: "POST", body: fd});
+    const data = await r.json();
+    if (data.ok) {
+      toast("已切换主照");
+      await loadPhotos();
+    } else {
+      toast(data.error || "切换失败");
+    }
+  }
+
+  if (btn.dataset.action === "delete") {
+    if (!confirm("确认删除这张照片？")) return;
+    const r = await fetch(`/api/photos/${encodeURIComponent(filename)}`, {method: "DELETE"});
+    const data = await r.json();
+    if (data.ok) {
+      toast("已删除");
+      await loadPhotos();
+    } else {
+      toast(data.error || "删除失败");
+    }
+  }
+});
+
+document.getElementById("photo-input").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const label = document.getElementById("upload-label");
+  label.textContent = "上传中…";
+
+  const fd = new FormData();
+  fd.append("file", file);
+  const r = await fetch("/upload/photo", {method: "POST", body: fd});
+
+  if (r.ok) {
+    const data = await r.json();
+    toast("✓ 上传成功，已设为主照");
+    await loadPhotos();
+  } else {
+    toast("上传失败，请重试");
+  }
+  label.textContent = "上传新照片";
+  e.target.value = "";  // 让同一文件能再次触发 change
+});
+
+loadPhotos();
+</script>
+{% endblock %}

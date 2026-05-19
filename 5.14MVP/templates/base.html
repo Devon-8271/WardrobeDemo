@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>{% block title %}Fashion Agent{% endblock %}</title>
+
+<!-- PWA -->
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<!-- iOS Safari: "添加到主屏幕"全屏模式 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fashion">
+<style>
+/* ── 变量 ──────────────────────────────────────────────────────────────── */
+:root {
+  --c-primary:   #1a1a1a;
+  --c-bg:        #f5f5f5;
+  --c-surface:   #fff;
+  --c-border:    #e8e8e8;
+  --c-text-sub:  #888;
+  --c-text-mute: #bbb;
+  --c-accent:    #1a1a1a;
+
+  --r-card:  12px;
+  --r-pill:  20px;
+  --r-btn:   22px;
+
+  --shadow-card: 0 1px 4px rgba(0,0,0,.07);
+
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--c-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--c-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 安全区 ──────────────────────────────────────────────────────────────
+   iPhone X+ 的灵动岛 / 刘海 / Home Indicator 区域不能放可点击 UI。
+   env(safe-area-inset-*) 是 iOS PWA / 全屏 web 的标准做法。
+   非 iPhone 设备 fallback 为 0，无影响。
+*/
+
+/* ── 顶栏 ────────────────────────────────────────────────────────────────
+   两种形态：
+   .page-header            主页用，左 title 右 actions
+   .page-header.sub-page   子页用，左←返回 中 title 右 actions
+*/
+.page-header {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  padding: env(safe-area-inset-top) calc(20px + env(safe-area-inset-right)) 0 calc(20px + env(safe-area-inset-left));
+  height: calc(56px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.page-header .header-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+.page-header .header-sub {
+  font-size: 13px;
+  color: var(--c-text-sub);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.page-header .header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--c-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.back-btn svg { flex-shrink: 0; }
+
+/* ── Tab 栏 ─────────────────────────────────────────────────────────────── */
+.tab-bar {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  padding: 0 20px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-item {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--c-text-sub);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: var(--font);
+}
+.tab-item.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+  font-weight: 500;
+}
+
+/* ── 卡片网格 ────────────────────────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+.card-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 16px;
+}
+
+/* ── 卡片 ────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.card-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  display: block;
+  background: #f0f0f0;
+}
+.card-img-square {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: #f0f0f0;
+}
+.card-body {
+  padding: 10px 12px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-primary);
+}
+.card-sub {
+  font-size: 11px;
+  color: var(--c-text-sub);
+  margin-top: 2px;
+}
+
+/* ── 功能入口卡片（2×2） ──────────────────────────────────────────────────── */
+.entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px 20px;
+}
+.entry-card {
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s;
+  position: relative;
+}
+.entry-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.entry-card.disabled { opacity: .45; cursor: default; pointer-events: none; }
+.entry-badge {
+  display: none;
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #e53935;
+  box-shadow: 0 0 0 2px #fff;
+}
+.entry-badge.show { display: block; }
+.entry-icon { font-size: 24px; }
+.entry-title { font-size: 14px; font-weight: 600; }
+.entry-sub { font-size: 11px; color: var(--c-text-sub); }
+
+/* ── 按钮 ────────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--c-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-btn);
+  padding: 10px 22px;
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: #333; }
+.btn-primary:disabled { background: #ccc; cursor: default; }
+
+.btn-ghost {
+  background: var(--c-bg);
+  color: var(--c-primary);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-btn);
+  padding: 10px 22px;
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-ghost:hover { background: var(--c-border); }
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--c-primary);
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+/* ── Tag / Pill ──────────────────────────────────────────────────────────── */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--c-bg);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--c-primary);
+  white-space: nowrap;
+}
+.tag-pill .trend { font-size: 10px; color: #888; }
+
+/* ── 空状态 ──────────────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 60px 20px;
+  color: var(--c-text-sub);
+  text-align: center;
+}
+.empty-state .empty-icon { font-size: 40px; }
+.empty-state .empty-text { font-size: 14px; }
+
+/* ── Loading spinner ─────────────────────────────────────────────────────── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--c-border);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 分页内容区 ──────────────────────────────────────────────────────────── */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+{% block extra_style %}{% endblock %}
+</style>
+</head>
+<body>
+
+{% block header %}
+<header class="page-header">
+  <span class="header-title">{% block header_title %}Fashion Agent{% endblock %}</span>
+  <div class="header-actions">{% block header_actions %}{% endblock %}</div>
+</header>
+{% endblock %}
+
+<main class="page-content">
+{% block content %}{% endblock %}
+</main>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
