@@ -39,6 +39,12 @@ import phase1_wardrobe
 import image2_client
 import style_identity
 
+# ── 远端衣橱后端（ootd-images-backend）────────────────────────────────────────
+_REMOTE_WARDROBE_BASE = "http://192.168.31.113:9000"
+_REMOTE_CACHE: dict | None = None
+_REMOTE_CACHE_TS: float = 0.0
+_REMOTE_CACHE_TTL: float = 60.0  # 1 分钟缓存
+
 # ── 初始化 ─────────────────────────────────────────────────────────────────────
 
 # 正在 beautify 的单品 ID 集合（内存，重启清零）
@@ -344,8 +350,8 @@ async def upload_photo(file: UploadFile = File(...), session_id: str = ""):
 
 @app.post("/upload/wardrobe-item")
 async def upload_wardrobe_item(file: UploadFile = File(...)):
-    """上传单品图 → Groq Vision 识别 → 返回识别结果供用户确认。"""
-    import asyncio
+    """上传单品图 → 优先远端 MCP 识别 → 兜底本地 Groq Vision → 返回识别结果供用户确认。"""
+    import asyncio, base64 as _b64
     save_dir = BASE_DIR / "images"
     save_dir.mkdir(exist_ok=True)
 
@@ -353,11 +359,41 @@ async def upload_wardrobe_item(file: UploadFile = File(...)):
     filename = f"{uuid.uuid4().hex}{ext}"
     dest     = save_dir / filename
 
+    file_bytes = await file.read()
     with open(dest, "wb") as f:
-        f.write(await file.read())
+        f.write(file_bytes)
 
-    # 阻塞调用放线程池，避免堵塞事件循环
-    items = await asyncio.to_thread(phase1_wardrobe.recognize_clothing, str(dest))
+    items: list = []
+
+    # 1) 优先远端 MCP（用 base64 避免远端下载时走代理）
+    try:
+        import remote_mcp_client as _rmcp
+        img_b64 = _b64.b64encode(file_bytes).decode()
+        result = await asyncio.to_thread(
+            _rmcp.submit_outfit_photo, "default", image_base64=img_b64
+        )
+        if result.get("ok") and result.get("items"):
+            # 变换远端格式为本地格式
+            for it in result["items"]:
+                items.append({
+                    "category":    it.get("category") or "",
+                    "type":        it.get("type") or it.get("raw_type") or "",
+                    "raw_type":    it.get("raw_type") or "",
+                    "color":       it.get("color") or [],
+                    "style":       [],
+                    "season":      [],
+                    "warmth":      "",
+                    "fit":         "",
+                    "description": f"{it.get('raw_type','')} {', '.join(it.get('color',[]))}".strip(),
+                })
+            print(f"[upload] 远端 MCP 识别到 {len(items)} 件")
+    except Exception as e:
+        print(f"[upload] 远端 MCP 失败，降级本地 Groq Vision: {e}")
+
+    # 2) 兜底本地 Groq Vision
+    if not items:
+        items = await asyncio.to_thread(phase1_wardrobe.recognize_clothing, str(dest))
+
     if not items:
         return {"ok": False, "error": "识别失败，请上传更清晰的照片", "items": []}
 
@@ -370,20 +406,43 @@ async def upload_wardrobe_item(file: UploadFile = File(...)):
 
 
 def _beautify_and_update(item_id: str, image_path: str):
-    """后台任务：调 image2 美化原图，完成后更新 DB image_url。"""
+    """后台任务：调远端 MCP image2 美化原图，完成后更新 DB image_url。兜底本地 image2。"""
     try:
+        import base64 as _b64
         print(f"  [beautify] 开始美化 {item_id}...")
         item = db.get_wardrobe_item(item_id) or {}
         color = "、".join(item.get("color") or [])
         desc  = item.get("description") or item.get("type") or ""
         label = f"{color}{desc}" if color else desc
-        beautified = phase1_wardrobe.beautify_image(image_path, description=label)
-        conn = db.get_conn()
-        conn.execute("UPDATE wardrobe SET image_url = ? WHERE item_id = ?",
-                     (beautified, item_id))
-        conn.commit()
-        conn.close()
-        print(f"  [beautify] 完成 {item_id} → {beautified}")
+
+        beautified = ""
+
+        # 1) 优先远端 MCP generate_item_image（用 base64 避免远端下载时走代理）
+        try:
+            import remote_mcp_client as _rmcp
+            with open(image_path, "rb") as f:
+                img_b64 = _b64.b64encode(f.read()).decode()
+            result = _rmcp.generate_item_image(
+                image_base64=img_b64,
+                item_description=label,
+            )
+            if result.get("ok") and result.get("image_url"):
+                beautified = result["image_url"]
+                print(f"  [beautify] 远端 MCP 完成 {item_id} → {beautified[:60]}...")
+        except Exception as e:
+            print(f"  [beautify] 远端 MCP 失败，降级本地 image2: {e}")
+
+        # 2) 兜底本地 image2
+        if not beautified:
+            beautified = phase1_wardrobe.beautify_image(image_path, description=label)
+            print(f"  [beautify] 本地 image2 完成 {item_id} → {beautified}")
+
+        if beautified:
+            conn = db.get_conn()
+            conn.execute("UPDATE wardrobe SET image_url = ? WHERE item_id = ?",
+                         (beautified, item_id))
+            conn.commit()
+            conn.close()
     except Exception as e:
         print(f"  [beautify] 失败 {item_id}: {e}")
     finally:
@@ -431,8 +490,14 @@ async def confirm_wardrobe_item(
     db.insert_wardrobe_item(item)
     outfit_recommender.invalidate_outfits()  # 衣橱变动，重算 outfit，图片能复用则保留
 
-    # 后台美化（image2 服务可用时才触发）
-    if phase1_wardrobe.image2_client.healthz():
+    # 后台美化（远端 MCP 或本地 image2 可用时触发）
+    remote_ok = False
+    try:
+        import remote_mcp_client as _rmcp
+        remote_ok = _rmcp.health()
+    except Exception:
+        pass
+    if remote_ok or phase1_wardrobe.image2_client.healthz():
         _beautifying.add(item_id)
         background_tasks.add_task(_beautify_and_update, item_id, image_path)
         beautifying = True
@@ -666,15 +731,96 @@ def hub_action(req: HubActionRequest, background_tasks: BackgroundTasks):
 
 # ── /api/wardrobe ──────────────────────────────────────────────────────────────
 
-@app.get("/api/wardrobe")
-def api_wardrobe(category: str = ""):
-    items = db.get_all_wardrobe_items(source_filter="real")
+def _fetch_remote_items(category: str = "", force: bool = False) -> list[dict]:
+    """从远端 ootd-images-backend 拉取衣橱单品，变换为本地格式。内存缓存 1 分钟。"""
+    global _REMOTE_CACHE, _REMOTE_CACHE_TS
+    import time as _time
+    now = _time.time()
+    if not force and _REMOTE_CACHE is not None and (now - _REMOTE_CACHE_TS) < _REMOTE_CACHE_TTL:
+        items = _REMOTE_CACHE
+    else:
+        try:
+            all_items = []
+            page = 1
+            session = requests.Session()
+            session.trust_env = False  # 不走 HTTP_PROXY，直连局域网
+            while True:
+                resp = session.get(
+                    f"{_REMOTE_WARDROBE_BASE}/api/browse/items",
+                    params={"page": page, "page_size": 100},
+                    timeout=10,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                items_page = data.get("items", [])
+                for it in items_page:
+                    fj = it.get("fields_json") or {}
+                    # 变换为本地 wardrobe 格式
+                    image_url = it.get("white_image_url") or ""
+                    if image_url and image_url.startswith("/"):
+                        image_url = _REMOTE_WARDROBE_BASE + image_url
+                    raw_image_url = it.get("raw_image_url") or ""
+                    if raw_image_url and raw_image_url.startswith("/"):
+                        raw_image_url = _REMOTE_WARDROBE_BASE + raw_image_url
+                    all_items.append({
+                        "item_id":       it.get("item_id", ""),
+                        "category":      fj.get("category") or "",
+                        "type":          fj.get("type") or "",
+                        "raw_type":      fj.get("raw_type") or "",
+                        "color":         fj.get("color") or [],
+                        "style":         fj.get("style") or [],
+                        "season":        fj.get("season") or [],
+                        "warmth":        fj.get("warmth") or "",
+                        "fit":           fj.get("fit") or "",
+                        "material":      fj.get("material") or [],
+                        "description":   fj.get("description") or "",
+                        "image_url":     image_url,
+                        "image_crop_url": "",
+                        "source":        "remote",
+                        "upload_time":   it.get("created_at") or "",
+                        "beautifying":   False,
+                        "annotation":    it.get("annotation_status") or "",
+                        "raw_image_url": raw_image_url,
+                    })
+                if len(items_page) < 100 or len(all_items) >= data.get("total", 0):
+                    break
+                page += 1
+            _REMOTE_CACHE = all_items
+            _REMOTE_CACHE_TS = now
+        except Exception as e:
+            print(f"[remote-wardrobe] fetch error: {e}")
+            if _REMOTE_CACHE is not None:
+                return _REMOTE_CACHE
+            return []
+
+    items = _REMOTE_CACHE
     if category:
         items = [it for it in items if it.get("category") == category]
-    for it in items:
-        it["image_url"] = _to_url(it.get("image_url") or "")
-        it["image_crop_url"] = _to_url(it.get("image_crop_url") or "")
-        it["beautifying"] = it["item_id"] in _beautifying
+    return items
+
+
+@app.get("/api/wardrobe")
+def api_wardrobe(category: str = "", source: str = "all"):
+    """
+    衣橱单品列表。source: all | local | remote
+    """
+    items: list = []
+
+    if source in ("all", "local"):
+        local_items = db.get_all_wardrobe_items(source_filter="real")
+        if category:
+            local_items = [it for it in local_items if it.get("category") == category]
+        for it in local_items:
+            it["image_url"] = _to_url(it.get("image_url") or "")
+            it["image_crop_url"] = _to_url(it.get("image_crop_url") or "")
+            it["beautifying"] = it["item_id"] in _beautifying
+            it["source"] = "local"
+        items.extend(local_items)
+
+    if source in ("all", "remote"):
+        remote_items = _fetch_remote_items(category)
+        items.extend(remote_items)
+
     return {"items": items, "total": len(items)}
 
 
@@ -946,11 +1092,6 @@ def submit_tryon_outfit(req: TryonOutfitTaskRequest, background_tasks: Backgroun
 
 # ── /looks 穿搭日志页 ──────────────────────────────────────────────────────────
 
-@app.get("/looks", response_class=HTMLResponse)
-def looks_page(request: Request):
-    return templates.TemplateResponse("looks.html", {"request": request})
-
-
 # ── /api/profile + /profile 我的形象 ───────────────────────────────────────────
 
 def _photo_url_for_file(filename: str) -> str:
@@ -1032,26 +1173,26 @@ def delete_photo(filename: str):
 
 @app.get("/profile", response_class=HTMLResponse)
 def profile_page(request: Request):
-    return templates.TemplateResponse("profile.html", {"request": request})
+    return templates.TemplateResponse(request, "profile.html")
 
 
 @app.get("/tryon", response_class=HTMLResponse)
 def tryon_page(request: Request):
-    return templates.TemplateResponse("tryon.html", {"request": request})
+    return templates.TemplateResponse(request, "tryon.html")
 
 
 # ── /wardrobe/upload 上传页 ────────────────────────────────────────────────────
 
 @app.get("/wardrobe/upload", response_class=HTMLResponse)
 def wardrobe_upload_page(request: Request):
-    return templates.TemplateResponse("wardrobe_upload.html", {"request": request})
+    return templates.TemplateResponse(request, "wardrobe_upload.html")
 
 
 # ── /wardrobe 衣橱页 ───────────────────────────────────────────────────────────
 
 @app.get("/wardrobe", response_class=HTMLResponse)
 def wardrobe_page(request: Request):
-    return templates.TemplateResponse("wardrobe.html", {"request": request})
+    return templates.TemplateResponse(request, "wardrobe.html")
 
 
 # ── /looks 穿搭日志 ────────────────────────────────────────────────────────────
@@ -1294,14 +1435,14 @@ def delete_look(look_id: str):
 
 @app.get("/looks", response_class=HTMLResponse)
 def looks_page(request: Request):
-    return templates.TemplateResponse("looks.html", {"request": request})
+    return templates.TemplateResponse(request, "looks.html")
 
 
 # ── / 首页 ─────────────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 # ── Tomorrow Planning（每晚 20:00 预生成明日推荐 + 拼图）─────────────────────────

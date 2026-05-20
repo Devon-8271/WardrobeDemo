@@ -1,0 +1,105 @@
+/* wardrobe.html — Wardrobe page */
+
+/* ── Count badge ──────────────────────────────────────────────────────────── */
+.count { font-size: 12px; color: var(--c-text-mute); margin-left: 3px; }
+
+/* ── Grid header ──────────────────────────────────────────────────────────── */
+.grid-header { padding: 12px 16px 4px; font-size: 13px; color: var(--c-text-sub); }
+
+/* ── Item card ────────────────────────────────────────────────────────────── */
+.item-card {
+  background: var(--c-surface);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+.item-card:hover  { transform: scale(1.02); }
+.item-card:active { transform: scale(0.98); }
+
+.item-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-img img { width: 100%; height: 100%; object-fit: cover; }
+.item-img.placeholder span { font-size: 12px; color: var(--c-text-mute); padding: 0 8px; text-align: center; }
+
+/* ── Beautify badge ───────────────────────────────────────────────────────── */
+.beautify-badge {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border-radius: 20px;
+  padding: 3px 8px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Item info ────────────────────────────────────────────────────────────── */
+.item-info  { padding: 8px 10px 10px; }
+.item-type  { font-size: 13px; font-weight: 500; color: var(--c-primary); }
+.item-color { font-size: 11px; color: var(--c-text-sub); margin-top: 2px; }
+.cat-dot    { width: 6px; height: 6px; border-radius: 50%;
+              display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+/* ── Detail modal ─────────────────────────────────────────────────────────── */
+.modal-img { width: 100%; max-height: 420px; object-fit: contain;
+             border-radius: 12px; margin-bottom: 16px; background: #f0f0f0;
+             display: block; }
+.modal-img.placeholder-large { height: 160px; display: flex; align-items: center;
+                                justify-content: center; color: var(--c-text-mute); font-size: 14px; }
+.modal h2   { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+.tag-row    { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tag        { background: #f0f0f0; border-radius: 20px; padding: 4px 10px;
+              font-size: 12px; color: #444; }
+.modal-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 20px; }
+.modal-delete { width: 100%; background: none; border: none; color: #c0392b;
+                font-size: 13px; cursor: pointer; padding: 10px; margin-top: 4px; }
+
+/* ── Select mode ──────────────────────────────────────────────────────────── */
+.item-card.selected::after {
+  content: "✓";
+  position: absolute; inset: 0;
+  background: rgba(74,144,217,.18);
+  border: 2.5px solid var(--c-primary);
+  border-radius: var(--r-card);
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  padding: 8px; font-size: 18px; color: var(--c-primary); font-weight: 700;
+}
+.select-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  display: none; gap: 10px; align-items: center;
+  z-index: 100;
+}
+.select-bar.visible { display: flex; }
+.select-bar-count { flex: 1; font-size: 14px; color: var(--c-text-sub); }
+.select-bar-save {
+  padding: 10px 24px; border-radius: 12px;
+  background: var(--c-primary); color: #fff; border: none;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+}
+.select-bar-save:disabled { opacity: .5; }
+
+/* ── Save-as-look sheet (shared with looks.html) ──────────────────────────── */
+.sheet-row   { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.sheet-label { font-size: 13px; color: var(--c-text-sub); }
+.scene-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.scene-pill  {
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer;
+  border: 1.5px solid var(--c-border); background: none; color: var(--c-text-primary);
+  transition: all .15s;
+}
+.scene-pill.active { border-color: var(--c-primary); background: var(--c-primary); color: #fff; }
