@@ -14,12 +14,12 @@ PROMPT = "一件简洁的白色宽松T恤平铺在纯白背景上，商品图风
 def main():
     image_paths = sys.argv[1:] or []
 
-    print("检查 image2 服务...")
+    print("检查 OpenAI API...")
     if not healthz():
-        print("image2 离线，请确认设备在同一 Wi-Fi（192.168.31.50:8787）")
+        print("OpenAI API 不可用，请检查 OPENAI_API_KEY 和网络连接")
         return
 
-    print(f"服务在线，开始生图")
+    print(f"API 在线，开始生图")
     print(f"Prompt: {PROMPT}")
     if image_paths:
         print(f"参考图: {image_paths}")

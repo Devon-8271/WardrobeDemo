@@ -1127,8 +1127,8 @@ loadRecommend(false);
         const data = await r.json();
         if (data.status === "completed") {
           done.push({ ...t, result_url: data.result_url });
-        } else if (data.status === "failed") {
-          // 直接丢弃失败任务，不打点
+        } else if (data.status === "failed" || data.status === "expired" || !data.ok) {
+          // 失败 / 服务重启后 task 不存在 → 丢弃，不再轮询
         } else {
           still.push(t);
         }

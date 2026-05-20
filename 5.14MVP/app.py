@@ -115,16 +115,25 @@ def _get_session(sid: str) -> dict:
 
 # ── 天气自动获取 ───────────────────────────────────────────────────────────────
 
+_weather_cache: dict = {"data": None, "ts": 0.0}
+_WEATHER_TTL = 120  # 两分钟内复用同一份天气，防止温度微浮动跨 bucket 导致 cache key 不同
+
 def _fetch_weather() -> dict:
+    import time
+    now = time.time()
+    if _weather_cache["data"] and now - _weather_cache["ts"] < _WEATHER_TTL:
+        return _weather_cache["data"]
     try:
         r = requests.get("https://wttr.in/?format=j1", timeout=4)
         data = r.json()
         d    = data["current_condition"][0]
         area = data.get("nearest_area", [{}])[0]
         city = area.get("areaName", [{}])[0].get("value", "")
-        return {"temp_c": float(d["temp_C"]), "description": d["weatherDesc"][0]["value"], "city": city}
+        result = {"temp_c": float(d["temp_C"]), "description": d["weatherDesc"][0]["value"], "city": city}
     except Exception:
-        return {"temp_c": 20, "description": "晴", "city": ""}
+        result = {"temp_c": 20, "description": "晴", "city": ""}
+    _weather_cache.update({"data": result, "ts": now})
+    return result
 
 
 def _fetch_weather_for_day(offset_days: int = 0) -> dict:
@@ -620,7 +629,8 @@ def get_task(task_id: str):
     """查询任务状态。前端按 5s 间隔轮询。"""
     task = _tasks.get(task_id)
     if not task:
-        return {"ok": False, "error": "任务不存在或已过期"}
+        # 返回 status="expired" 让前端停止轮询，而不是无限等待
+        return {"ok": False, "status": "expired", "error": "任务不存在或已过期"}
     return {"ok": True, **task}
 
 
@@ -1238,6 +1248,7 @@ def api_save_look_from_ootd(req: SaveOotdLookRequest, background_tasks: Backgrou
         }
         db.insert_wardrobe_item(wardrobe_item)
         item_ids.append(new_item_id)
+        outfit_recommender.invalidate_outfits(req.user_id or "default")
 
         # 后台生成白底图
         if ootd_path:

@@ -194,12 +194,12 @@ def _rule_caption(outfit_items: list, weather: dict, occasion: str = None) -> st
 
 def _llm_caption(outfit_items: list, weather: dict, occasion: str = None) -> str:
     try:
-        from groq import Groq
-        groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        from openai import OpenAI
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         styles = list({s for it in outfit_items for s in it.get("style", [])})
         types  = [it.get("type", "") for it in outfit_items]
 
-        items_desc = "、".join(types)
+        items_desc  = "、".join(types)
         styles_desc = "、".join(styles) if styles else "百搭"
         weather_desc = f"{weather.get('temp_c')}°C {weather.get('description', '')}".strip()
 
@@ -220,8 +220,8 @@ def _llm_caption(outfit_items: list, weather: dict, occasion: str = None) -> str
             )
             user = f"天气：{weather_desc}\n搭配：{items_desc}（风格 {styles_desc}）"
 
-        resp = groq.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        resp = client.chat.completions.create(
+            model="gpt-4.1-mini",
             messages=[
                 {"role": "system", "content": sys},
                 {"role": "user",   "content": user},
@@ -232,6 +232,118 @@ def _llm_caption(outfit_items: list, weather: dict, occasion: str = None) -> str
         return resp.choices[0].message.content.strip().strip("「」\"'.")
     except Exception:
         return _rule_caption(outfit_items, weather, occasion)
+
+
+# ── 场合 → 风格映射 ────────────────────────────────────────────────────────────
+
+_OCCASION_STYLE: dict[str, list[str]] = {
+    "面试":   ["通勤", "正式", "极简", "商务"],
+    "工作":   ["通勤", "正式", "商务", "极简"],
+    "通勤":   ["通勤", "极简", "商务"],
+    "开会":   ["通勤", "正式", "商务"],
+    "约会":   ["法式", "浪漫", "优雅", "甜美"],
+    "逛街":   ["休闲", "街头", "极简", "法式"],
+    "聚餐":   ["优雅", "法式", "休闲", "浪漫"],
+    "派对":   ["街头", "甜美", "浪漫", "嘻哈"],
+    "运动":   ["运动", "街头", "机能"],
+    "健身":   ["运动", "机能"],
+    "户外":   ["运动", "机能", "街头"],
+    "旅游":   ["休闲", "运动", "街头"],
+    "学校":   ["学院", "休闲", "极简"],
+    "上课":   ["学院", "休闲", "极简"],
+    "日常":   [],   # 不加权，用用户历史风格
+    "随便":   [],
+}
+
+def _occasion_boost(occasion: str) -> dict:
+    """把用户的场合描述映射为风格权重加成（叠加到 style_w 上）。"""
+    if not occasion:
+        return {}
+    occ = occasion.strip()
+    for keyword, styles in _OCCASION_STYLE.items():
+        if keyword in occ:
+            return {s: 1.5 for s in styles}   # 场合匹配的风格加权 1.5
+    return {}
+
+
+# ── 风格一致性 & 颜色搭配打分 ──────────────────────────────────────────────────
+
+_STYLE_GROUPS: list[set] = [
+    {"通勤", "正式", "商务", "职场", "OL"},
+    {"休闲", "学院"},
+    {"法式", "优雅", "浪漫", "甜美", "复古"},
+    {"街头", "运动", "嘻哈", "机能"},
+]
+_BRIDGE_STYLES = {"极简", "简约"}
+
+
+def _style_consistency_score(combo: list) -> float:
+    """跨风格组越多越扣分，聚焦加分。"""
+    groups_seen = set()
+    for item in combo:
+        for tag in item.get("style", []):
+            if tag in _BRIDGE_STYLES:
+                continue
+            for i, grp in enumerate(_STYLE_GROUPS):
+                if tag in grp:
+                    groups_seen.add(i)
+                    break
+    n = len(groups_seen)
+    if n <= 1:
+        return 0.3
+    if n == 2:
+        return -0.2
+    return -0.5
+
+
+_COLOR_NEUTRAL = {"白", "黑", "灰", "米", "卡其", "驼", "象牙", "奶", "裸"}
+_COLOR_EARTH   = {"棕", "咖", "茶", "土"}
+_COLOR_COOL    = {"蓝", "绿", "紫", "青", "薄荷"}
+_COLOR_WARM    = {"红", "橙", "黄", "粉", "玫", "砖", "酒"}
+_COLOR_VIVID   = {"荧光", "亮黄", "明黄"}
+
+
+def _classify_color(color_str: str) -> str:
+    for kw in _COLOR_VIVID:
+        if kw in color_str:
+            return "vivid"
+    for kw in _COLOR_NEUTRAL:
+        if kw in color_str:
+            return "neutral"
+    for kw in _COLOR_EARTH:
+        if kw in color_str:
+            return "earth"
+    for kw in _COLOR_COOL:
+        if kw in color_str:
+            return "cool"
+    for kw in _COLOR_WARM:
+        if kw in color_str:
+            return "warm"
+    return "unknown"
+
+
+def _color_harmony_score(combo: list) -> float:
+    """颜色搭配软评分，clamp 到 [-0.5, 0.5]。"""
+    types, vivid_count = [], 0
+    for item in combo:
+        for c in item.get("color", []):
+            t = _classify_color(c)
+            types.append(t)
+            if t == "vivid":
+                vivid_count += 1
+
+    non_neutral = [t for t in types if t not in ("neutral", "earth", "unknown")]
+    score = 0.0
+    if not non_neutral:
+        score += 0.3
+    elif len(non_neutral) == 1:
+        score += 0.2
+    else:
+        if non_neutral.count("cool") > 0 and non_neutral.count("warm") > 0:
+            score -= 0.2
+    if vivid_count >= 2:
+        score -= 0.3
+    return max(-0.5, min(0.5, score))
 
 
 # ── 排序：风格档案加权 + 最近穿过惩罚 ──────────────────────────────────────────
@@ -256,19 +368,27 @@ def _recent_item_sets(user_id: str, days: int = 7) -> list:
 
 
 def _score_combo(combo: list, style_w: dict, recent_sets: list) -> float:
-    """风格匹配加分（命中偏好 +w），最近穿过的高重叠组合扣分。"""
+    """综合打分：风格偏好加分 + 最近穿过惩罚 + 风格一致性 + 颜色搭配。"""
     score = 0.0
+
+    # 用户风格偏好加分
     styles = {s for it in combo for s in it.get("style", [])}
     if style_w and styles:
         score += sum(style_w.get(s, 0) for s in styles)
 
+    # 最近 7 天重复惩罚
     combo_ids = {it["item_id"] for it in combo}
     for recent in recent_sets:
         if not recent:
             continue
         overlap = len(combo_ids & recent) / max(len(combo_ids), 1)
-        if overlap >= 0.5:           # 半数以上单品最近穿过 → 重罚
+        if overlap >= 0.3:
             score -= overlap
+
+    # 风格一致性 & 颜色搭配
+    score += _style_consistency_score(combo)
+    score += _color_harmony_score(combo)
+
     return score
 
 
@@ -276,7 +396,43 @@ def _score_combo(combo: list, style_w: dict, recent_sets: list) -> float:
 
 _K_SLOT  = 10   # 上装 / 下装 / 全身每 slot 召回上限
 _K_OUTER = 3    # 外套召回上限
-_K_SHOE  = 3    # 鞋履召回上限
+_K_SHOE  = 6    # 鞋履召回上限（扩大让跨套换鞋有更多选择）
+
+_COLD_ONLY_TYPES = {"帽子", "围巾"}   # 只在气温 ≤10°C 时纳入候选
+
+
+def _acc_style_sim(acc_styles: set, outfit_styles: set) -> float:
+    """Jaccard 相似度：两个风格集合的交集 / 并集。"""
+    if not acc_styles or not outfit_styles:
+        return 0.0
+    return len(acc_styles & outfit_styles) / len(acc_styles | outfit_styles)
+
+
+def _pick_accessory(combo: list, accessories: list, cold: bool, exclude: set = None):
+    """outfit 定好后，从配件池里召回风格最相似的一件。
+    - 围巾/帽子仅在 cold=True 时纳入候选（防止夏天推围巾）
+    - exclude: 已被其他套装选走的配件 id，优先选未用过的
+    """
+    if not accessories:
+        return None
+
+    exclude = exclude or set()
+    outfit_styles = {s for it in combo for s in it.get("style", [])}
+
+    candidates = [
+        a for a in accessories
+        if not (any(t in (a.get("type") or "") for t in _COLD_ONLY_TYPES) and not cold)
+    ]
+    if not candidates:
+        return None
+
+    candidates.sort(
+        key=lambda a: (
+            1 if a["item_id"] in exclude else 0,   # 未用过优先
+            -_acc_style_sim(set(a.get("style", [])), outfit_styles),
+        ),
+    )
+    return candidates[0]
 
 
 def _retrieve_slot(items: list, category: str, allowed_warmth: set,
@@ -331,10 +487,86 @@ def _form_combos(tops: list, bottoms: list, fulls: list,
     return combos
 
 
+_RERANK_THRESHOLD = 1.0   # rule score 低于此值时触发 GPT-4o rerank
+
+
+def _fmt_combo(combo: list) -> str:
+    parts = []
+    for it in combo:
+        color = "、".join(it.get("color") or [])
+        style = "、".join(it.get("style") or [])
+        parts.append(f"{color}{it.get('type', '')}({style})")
+    return " + ".join(parts)
+
+
+def _gpt_rerank(candidates: list, weather: dict, occasion: str = None) -> list:
+    """GPT-4o 对候选组合重排序，返回重排后列表；失败时返回原顺序。"""
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), timeout=30.0)
+
+        outfit_lines = "\n".join(
+            f"套装{i+1}: {_fmt_combo(c)}" for i, c in enumerate(candidates)
+        )
+        temp_c = weather.get("temp_c", 15)
+        desc   = weather.get("description", "")
+        occ_line = f"场合：{occasion}\n" if occasion else ""
+
+        system = (
+            "你是专业穿搭顾问。根据以下规则对候选套装从好到差排序，"
+            "只返回套装编号，用英文逗号分隔，例如：3,1,4,2\n\n"
+            "排序规则（优先级从高到低）：\n"
+            "1. 风格一致性：同一风格系（正装/休闲/优雅/街头）内搭配优先；极简/简约可与任何风格搭\n"
+            "2. 颜色搭配：中性色（白/黑/灰/米/卡其）组合最稳；1件点缀色+其余中性色好；冷暖混搭扣分\n"
+            "3. 整体和谐：版型、材质、场合是否协调\n"
+            "4. 实际可穿：真实日常中真正会穿的组合"
+        )
+        user = (
+            f"天气：{temp_c}°C {desc}\n"
+            f"{occ_line}"
+            f"候选套装：\n{outfit_lines}\n\n"
+            "请从最好到最差排序，只返回编号。"
+        )
+
+        resp = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user},
+            ],
+            max_tokens=60,
+            temperature=0,
+        )
+
+        raw = resp.choices[0].message.content.strip()
+        indices = []
+        seen_idx = set()
+        for tok in raw.replace("，", ",").split(","):
+            tok = tok.strip()
+            if tok.isdigit():
+                idx = int(tok) - 1
+                if 0 <= idx < len(candidates) and idx not in seen_idx:
+                    seen_idx.add(idx)
+                    indices.append(candidates[idx])
+        # 补上 GPT-4o 没提到的候选（不丢弃）
+        for i, c in enumerate(candidates):
+            if i not in seen_idx:
+                indices.append(c)
+        print(f"  [recommender] GPT-4o rerank 完成，{len(candidates)} 套候选重排")
+        return indices
+
+    except Exception as e:
+        print(f"  [recommender] GPT-4o rerank 失败: {e}")
+        return candidates
+
+
 def _make_outfits(items: list, weather: dict, occasion: str, n: int, user_id: str = "default") -> list:
     allowed     = _allowed_warmth(weather.get("temp_c", 15), user_id)
     cold        = weather.get("temp_c", 15) <= 10
     style_w     = _style_weights(user_id)
+    # 场合有效时把场合对应风格权重叠加（取最大值，不覆盖用户历史偏好）
+    for style, w in _occasion_boost(occasion).items():
+        style_w[style] = max(style_w.get(style, 0), w)
     recent_sets = _recent_item_sets(user_id)
 
     # Stage 1：每 slot 独立召回 top-K（硬过滤冷暖 → 风格排序）
@@ -356,19 +588,68 @@ def _make_outfits(items: list, weather: dict, occasion: str, n: int, user_id: st
     ]
     scored.sort(key=lambda x: -x[0])
 
-    seen, top_combos = set(), []
-    for _, combo in scored:
-        key = tuple(sorted(it["item_id"] for it in combo))
-        if key in seen:
-            continue
-        seen.add(key)
-        has_warning = bool({it["item_id"] for it in combo} & fallback_ids)
-        top_combos.append((combo, has_warning))
+    # 规则分低于阈值时，GPT-4o 介入对 top-20 候选重排
+    top_score = scored[0][0] if scored else 0
+    if top_score < _RERANK_THRESHOLD:
+        pool = _gpt_rerank([c for _, c in scored[:20]], weather, occasion)
+    else:
+        pool = [c for _, c in scored]
+
+    # 第一轮：上装/下装/全身 严格不重复（每件只能出现在一套里）
+    # 鞋履/配件不做限制（允许跨套复用）
+    # 不用风格组约束，避免衣橱风格单一时过早触发 fallback
+    _DOMINANT_CATS = {"上装", "下装", "全身"}
+    seen_keys = set()
+    top_combos = []
+    used_dominant: set = set()   # 已被选中的上装/下装/全身 item_id
+
+    for combo in pool:
         if len(top_combos) >= n:
             break
+        key = tuple(sorted(it["item_id"] for it in combo))
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+
+        combo_ids    = {it["item_id"] for it in combo}
+        dominant_ids = {it["item_id"] for it in combo if it.get("category") in _DOMINANT_CATS}
+
+        if dominant_ids & used_dominant:   # 有上装或下装已被其他套装占用
+            continue
+
+        has_warning = bool(combo_ids & fallback_ids)
+        top_combos.append((combo, has_warning))
+        used_dominant |= dominant_ids
+
+    # 第二轮 fallback：上装不够 n 件时（衣橱太小），放宽约束按分数补足
+    if len(top_combos) < n:
+        selected_keys = {tuple(sorted(it["item_id"] for it in combo)) for combo, _ in top_combos}
+        for combo in pool:
+            if len(top_combos) >= n:
+                break
+            key = tuple(sorted(it["item_id"] for it in combo))
+            if key in selected_keys:
+                continue
+            combo_ids = {it["item_id"] for it in combo}
+            has_warning = bool(combo_ids & fallback_ids)
+            top_combos.append((combo, has_warning))
+            selected_keys.add(key)
 
     if not top_combos:
         return []
+
+    # Stage 2.5：给每套追加一件配件，已用过的配件降权，保证不同套装尽量用不同配件
+    accessories = [it for it in items if it.get("category") == "配件"]
+    if accessories:
+        used_acc_ids: set = set()
+        new_top_combos = []
+        for combo, hw in top_combos:
+            acc = _pick_accessory(combo, accessories, cold, exclude=used_acc_ids)
+            if acc:
+                used_acc_ids.add(acc["item_id"])
+                combo = combo + [acc]
+            new_top_combos.append((combo, hw))
+        top_combos = new_top_combos
 
     # Stage 3：并发 LLM caption（全套，不再只生成第一套）
     def _caption(combo):
