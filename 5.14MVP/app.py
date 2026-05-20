@@ -717,11 +717,20 @@ def trigger_beautify(item_id: str, background_tasks: BackgroundTasks):
 
 # ── /api/recommend ─────────────────────────────────────────────────────────────
 
-def _generate_outfit_images_bg(cache_key: tuple, user_photo: str, outfits: list) -> None:
+def _generate_outfit_images_bg(
+    cache_key: tuple,
+    user_photo: str,
+    outfits: list,
+    occasion: str = None,
+    is_weekend: bool = None,
+) -> None:
     """后台任务：调 image2 生成拼图 → 裁切 → 写入 outfit_recommender 图缓存。"""
     try:
         local_paths = outfit_generator.generate_outfit_grid(
-            user_photo=user_photo, outfits=outfits,
+            user_photo=user_photo,
+            outfits=outfits,
+            occasion=occasion,
+            is_weekend=is_weekend,
         )
         outfit_recommender.set_cached_images(cache_key, local_paths)
         print(f"[recommend] 拼图生成完成，{len(local_paths)} 张")
@@ -752,15 +761,16 @@ def api_recommend(background_tasks: BackgroundTasks, n: int = 4, refresh: int = 
     """
     from datetime import date as _date, datetime as _datetime
 
-    weather = _fetch_weather()
+    weather    = _fetch_weather()
+    _today     = _date.today()
+    _now_hour  = _datetime.now().hour
+    is_weekend = _today.weekday() >= 5
     outfits = outfit_recommender.recommend_outfits(
         user_id="default", weather=weather, n=n, refresh=bool(refresh),
     )
 
     # 晚 TOMORROW_PLANNING_HOUR 点后、且今日已有确认穿搭 → 切换到明日推荐
     # 防止用户今天还没出门就看到明日推荐
-    _today = _date.today()
-    _now_hour = _datetime.now().hour
     if _now_hour >= TOMORROW_PLANNING_HOUR and db.has_look_on_date(_today.isoformat()):
         _target_date = (_today + timedelta(days=1)).isoformat()
     else:
@@ -815,6 +825,7 @@ def api_recommend(background_tasks: BackgroundTasks, n: int = 4, refresh: int = 
                 elif outfit_recommender.claim_generating(key):
                     background_tasks.add_task(
                         _generate_outfit_images_bg, key, user_photo, list(outfits),
+                        None, is_weekend,
                     )
                     status = "running"
                 else:
@@ -1336,8 +1347,7 @@ def _run_tomorrow_planning() -> None:
         print("[tomorrow planning] 跳过：用户未上传全身照")
         return
     if not phase1_wardrobe.image2_client.healthz():
-        print("[tomorrow planning] 跳过：image2 服务不可达")
-        return
+        raise ConnectionError("OpenAI API 不可达")
 
     tomorrow = (date.today() + timedelta(days=1)).isoformat()
     weather  = _fetch_weather_for_day(1)
@@ -1363,9 +1373,13 @@ def _run_tomorrow_planning() -> None:
         print(f"[tomorrow planning] 完成，{len(local_paths)} 张已就绪")
     except Exception as e:
         print(f"[tomorrow planning] 生图失败: {e}")
+        raise
     finally:
         outfit_recommender.mark_generating(key, False)
 
+
+_TOMORROW_MAX_RETRIES  = 3
+_TOMORROW_RETRY_DELAY  = 15 * 60  # 每次重试间隔 15 分钟
 
 async def _tomorrow_planning_loop() -> None:
     while True:
@@ -1373,12 +1387,21 @@ async def _tomorrow_planning_loop() -> None:
         print(f"[tomorrow planning] 下次触发: {int(delay)}s 后（约 {int(delay/3600)}h）")
         try:
             await asyncio.sleep(delay)
-            await asyncio.to_thread(_run_tomorrow_planning)
         except asyncio.CancelledError:
             return
-        except Exception as e:
-            print(f"[tomorrow planning] loop 异常: {e}")
-            await asyncio.sleep(60)   # 防止异常快速重启风暴
+
+        for attempt in range(1, _TOMORROW_MAX_RETRIES + 1):
+            try:
+                await asyncio.to_thread(_run_tomorrow_planning)
+                break  # 成功，结束重试
+            except asyncio.CancelledError:
+                return
+            except Exception as e:
+                if attempt < _TOMORROW_MAX_RETRIES:
+                    print(f"[tomorrow planning] 第 {attempt} 次失败，{_TOMORROW_RETRY_DELAY // 60} 分钟后重试: {e}")
+                    await asyncio.sleep(_TOMORROW_RETRY_DELAY)
+                else:
+                    print(f"[tomorrow planning] 已重试 {attempt} 次，放弃，明日再试: {e}")
 
 
 @app.on_event("startup")

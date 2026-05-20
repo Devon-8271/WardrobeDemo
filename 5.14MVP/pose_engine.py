@@ -1,108 +1,238 @@
 """
-pose_engine.py
-衣橱标签 → 视觉姿势语言翻译层。
+pose_engine v2 — 时尚动作原子库
 
-不直接把结构化标签喂给 image2；
-而是把 style / fit / category 翻译成 image2 能理解的自然语言姿势指令。
+core principle:
+    场景决定：正在干什么（action anchor）
+    风格决定：怎么做这个动作（mood modifier）
+    品类决定：镜头必须展示什么（composition rules）
 
-调用方式：
-    from pose_engine import build_pose_hint
-    hint = build_pose_hint(item)               # 单品试穿
-    hint = build_pose_hint(item, ootd_items)   # OOTD 整体试穿
+设计原则（男女通用）：
+    动作关注：走路、整理外套、看手机、拿咖啡、扶墨镜、拎包、坐台阶、镜自拍
+    避免女性化专属动作：提裙摆、托腮、娇羞回眸、摸耳环
 """
 
 import random
 
-_POWER = {
-    "街头", "工装", "机能", "Gorpcore", "中性", "帅", "酷",
-    "美式", "硬核", "朋克", "暗黑", "嘻哈", "户外",
-}
-_SOFT = {
-    "温柔", "甜美", "法式", "韩系", "学院", "仙女", "少女",
-    "优雅", "清新", "浪漫", "日系", "复古少女", "轻熟",
-}
-_FORMAL = {
-    "通勤", "OL", "商务", "极简", "正式", "职场",
-    "简约", "高级感", "静奢",
-}
+# ── 1. 场景 → 动作锚点 ────────────────────────────────────────────────────────
 
-_POSE_POOLS = {
-    "power": [
-        "双手插口袋，身体正面，肩膀打开，重心均匀",
-        "双手抱臂，直视前方，气场沉稳",
-        "靠墙站立，单手插袋，神态随意放松",
-        "蹲姿，双肘撑膝，自信放松",
-        "行走抓拍，步幅较大，肩膀舒展",
-        "回头，侧身，单手扶帽沿或插袋",
+SCENE_ACTION_ANCHORS = {
+    "commute_street": [
+        "手持咖啡杯从玻璃门走出，另一只手自然整理包带或外套",
+        "在人行道上向镜头走来，一脚更靠近镜头，像朋友抓拍",
+        "等红绿灯时低头看手机，身体轻微侧向街道",
+        "从地铁口或电梯厅走出来，外套自然敞开形成动态",
+        "站在路边单手扶墨镜、帽檐或耳机，另一只手拿包",
+        "走过建筑立面时回头和朋友说话，身体没有完全停下",
+        "靠在街边墙面或玻璃窗旁，脚尖一前一后拉长比例",
+        "一手拿手机一手拎包，像刚结束通勤被抓拍",
     ],
-    "soft": [
-        "微侧身 45°，单腿重心，手轻扶发梢",
-        "手提包带，低头微笑，身体侧向",
-        "行走抓拍，步伐轻盈，衣摆自然飘动",
-        "回眸站姿，身体侧转，视线回望镜头",
-        "坐姿，腿部侧放交叠，手轻放膝上",
-        "单手扶肩带，另一手自然垂落，面带微笑",
+
+    "office_clean": [
+        "从办公楼玻璃门走出，手持包、电脑包或文件夹，步伐干净",
+        "站在建筑立面前整理袖口、腕表或外套领口",
+        "走过走廊或电梯厅，包在身体外侧完整可见",
+        "靠在会议桌或栏杆边，手指轻触桌面，不要抱臂",
+        "站在落地窗旁，身体微侧，肩颈线条干净",
+        "室内镜自拍，背景极简，手机偏侧，不遮挡廓形",
+        "走出电梯厅，手持文件或包，目视前方",
+        "坐在咖啡馆椅边翻看手机，背部自然挺直",
     ],
-    "formal": [
-        "侧身站立，单手插口袋，另一手自然垂落",
-        "行走抓拍，步态稳健，目视前方",
-        "正面站立，双手自然垂落或持包，姿态挺拔",
-        "坐姿前倾，双手交叠，神态干练",
-        "手扶翻领或袖口，低头整理的自然瞬间",
+
+    "date_restaurant": [
+        "坐在窗边桌旁，手自然扶着杯子、菜单或桌沿，视线看向窗外",
+        "站在餐厅门口等人，一只手扶包带或外套，身体微侧",
+        "从座位上起身整理外套下摆，动作自然像刚被拍到",
+        "靠在吧台或高桌边，手指轻触杯沿但不要夸张举杯",
+        "走进餐厅门口时轻微回头，外套或下摆有一点动态",
+        "坐在椅边，一条腿自然向前，包放在身体外侧可见",
+        "站在餐厅窗外台阶上，轻整外套或包带，像赴约前被拍到",
+        "坐在户外咖啡桌边翻包或手机，姿态放松",
+    ],
+
+    "travel_vacation": [
+        "沿街道、海边步道或酒店外自然行走，衣摆有轻微风感",
+        "坐在台阶或矮墙上，一条腿自然伸出，鞋子完整可见",
+        "背对镜头看风景，头轻微转向一侧，不要夸张回眸",
+        "手扶帽檐、墨镜或相机，身体微侧，像旅途中被朋友抓拍",
+        "站在建筑或风景前但不完全居中，保留环境留白",
+        "一手拿相机、手机或水杯，另一只手整理包或外套",
+        "从街角转身走向镜头，脚步有动态",
+        "坐在户外咖啡桌边翻包，姿态放松",
+    ],
+
+    "weekend_market": [
+        "拿着纸袋边走边看摊位，身体自然偏向商品方向",
+        "弯腰或半蹲查看摊位上的物品，突出鞋和下装",
+        "一手拿饮品一手拎购物袋，像周末逛街抓拍",
+        "站在摊位前侧身挑选东西，包和上半身都清楚可见",
+        "边走边回头和朋友说话，人物不完全居中",
+        "从店门口走出来，手里拿购物袋，衣服有自然褶皱",
+        "靠在市集摊位旁整理帽子或包带，动作轻松",
+        "低头看手里的小物件，另一只手自然拎包",
+    ],
+
+    "party_night": [
+        "夜晚街边或电梯镜自拍，一手拿小包或手机，一手整理头发、领口或外套",
+        "站在灯光下微微转身，展示上衣、下装或外套光泽",
+        "靠在吧台或墙边，身体斜向镜头，表情放松偏酷",
+        "从车边、门口或活动入口走来，包和鞋完整入镜",
+        "坐在高脚椅边缘，一条腿自然伸出，避免僵硬端坐",
+        "在镜面或玻璃反射中拍全身，氛围暗但穿搭清楚",
+        "回头看向朋友方向，像被抓拍到的夜晚 OOTD",
+        "站在夜晚建筑外，暖光打在脸侧，穿搭清楚可见",
+    ],
+
+    "campus_casual": [
+        "背着包走在校园路上，一手拿书、电脑或饮品，像朋友抓拍",
+        "坐在台阶上低头看手机，鞋子和裤装完整可见",
+        "靠在教学楼墙边，一脚踩在低台阶上，身体放松",
+        "边走边回头和朋友说话，头发和衣摆有轻微动态",
+        "从图书馆门口走出，一手整理外套或包带",
+        "半蹲整理鞋带或裤脚，突出鞋和下装",
+        "站在自动贩卖机旁，低头看手机",
+        "坐在长椅边，包放在身体旁边清楚可见",
+    ],
+
+    "home_mirror": [
+        "全身镜自拍，手机遮住部分脸，另一只手整理衣摆、裤腰或外套",
+        "镜自拍中身体轻微转向一侧，单腿自然弯曲，脚尖向外",
+        "试衣镜前侧身自拍，展示包、腰线和下装线条",
+        "电梯镜自拍，人物居中，手机偏侧，不挡住整体穿搭",
+        "坐在床边或椅边镜自拍，鞋子完整入镜",
+        "低角度全身镜自拍，腿部拉长但鞋子不能被裁掉",
+        "对镜整理领口或袖口，另一只手拿手机自拍",
+        "侧身镜自拍展示外套廓形和包",
     ],
 }
 
-_CATEGORY_BONUS = {
-    "裙子": "呈现裙摆动态或层次感，腿部线条完整入镜",
-    "外套": "外套可自然敞开，内搭清晰可见",
-    "鞋履": "全身完整入镜，鞋部细节清晰",
-    "下装": "腿部线条完整入镜，裤线或裙摆清晰",
-    "全身": "整体廓形完整呈现，头顶到脚底全身入镜",
+# ── 2. 风格 → 气质修饰 ────────────────────────────────────────────────────────
+
+_POWER_TAGS  = {"街头", "美式", "辣妹", "酷感", "机能", "运动", "Y2K", "皮衣", "牛仔",
+                "嘻哈", "工装", "户外", "千禧", "摇滚", "高街", "oversize", "boyish",
+                "赛车", "摩托", "赛博", "未来感", "先锋", "酷飒"}
+_SOFT_TAGS   = {"法式", "优雅", "温柔", "甜美", "复古", "韩系", "仙女", "浪漫", "少女",
+                "轻熟", "气质", "日系", "学院", "文艺", "松弛", "慵懒", "清新",
+                "度假", "波西米亚", "海岛", "田园", "clean girl", "复古学院"}
+_FORMAL_TAGS = {"通勤", "极简", "商务", "老钱", "静奢", "简约", "正式", "OL", "职场",
+                "高级感", "礼服", "中性", "知性", "干练", "利落", "基础款",
+                "clean fit", "quiet luxury", "smart casual"}
+
+STYLE_MOOD_MODIFIERS = {
+    "power": {
+        "body":         "身体线条打开，动作有方向感，姿态不对称，步幅舒展",
+        "expression":   "表情自然偏酷，眼神可以不看镜头，像街拍抓拍",
+        "avoid":        "避免僵硬抱臂、刻意摆酷、夸张叉腰、影楼感站姿",
+    },
+    "soft": {
+        "body":         "动作放松，身体微侧，手部动作自然，肩颈舒展",
+        "expression":   "表情柔和自然，可以低头、看向别处或轻微微笑",
+        "avoid":        "避免过度甜美、夸张回眸、托腮公主感、性别化摆拍",
+    },
+    "formal": {
+        "body":         "姿态挺拔，动作克制干净，线条利落，重心稳定",
+        "expression":   "神态平静自信，目光自然平视或轻微偏离镜头",
+        "avoid":        "避免证件照站姿、商务宣传片感、过度僵硬正面站立",
+    },
 }
 
+# ── 3. 品类 → 构图约束 ────────────────────────────────────────────────────────
 
-def _score_vibe(styles: set, fits: set) -> str:
-    power  = len(styles & _POWER)  + (1 if {"oversize", "宽松"} & fits else 0)
-    soft   = len(styles & _SOFT)   + (1 if "修身" in fits else 0)
-    formal = len(styles & _FORMAL)
-    scores = {"power": power, "soft": soft, "formal": formal}
+CATEGORY_COMPOSITION_RULES = {
+    "全身":  ["整体廓形完整呈现，头顶到脚底全身入镜", "避免任何单品被截断"],
+    "下装":  ["必须全身入镜，裤线、裤脚和鞋子完整可见", "避免盘腿坐或裁掉脚部"],
+    "裙子":  ["必须展示完整裙长和裙摆轮廓", "优先轻走动或站姿，避免坐姿压住裙摆"],
+    "上装":  ["上半身版型、领口、袖长需要清楚可见", "避免双臂交叉遮挡胸前和腰线"],
+    "外套":  ["需展示外套正面廓形和打开后内搭层次", "避免手臂或包完全遮挡外套主体"],
+    "鞋履":  ["鞋子必须完整入镜，不被裁切或遮挡", "优先走路、踩台阶动作"],
+    "配件":  ["包必须位于身体外侧或手中，不能被手臂挡住",
+              "首饰需至少一个动作突出，如整理领口、袖口或包带"],
+}
+
+# ── 4. 场景 → 镜头语言 ────────────────────────────────────────────────────────
+
+SCENE_CAMERA_LANGUAGE = {
+    "commute_street": "全身街拍视角，略低机位或朋友抓拍，保留街道和建筑线条，鞋子不要被裁掉",
+    "date_restaurant": "自然光或室内暖光，半身到全身均可，环境只做氛围，不要让餐具抢主体",
+    "travel_vacation": "朋友视角抓拍，人物可稍微偏离中心，保留风景留白，但穿搭必须清楚",
+    "weekend_market":  "生活流抓拍，环境可有轻微杂物，但人物和穿搭必须是视觉中心",
+    "office_clean":    "构图干净稳定，建筑线条或室内极简背景，人物姿态利落但不像证件照",
+    "party_night":     "夜晚氛围光，穿搭主体清楚，避免过暗导致衣服细节丢失",
+    "campus_casual":   "朋友视角自然抓拍，校园背景轻量出现，人物动作松弛但穿搭完整",
+    "home_mirror":     "镜自拍视角，手机入镜但不遮挡穿搭，光线柔和干净，背景极简",
+}
+
+# ── 5. 全局负向规则 ───────────────────────────────────────────────────────────
+
+GLOBAL_NEGATIVE_RULES = [
+    "避免僵硬正面站立",
+    "避免传统影楼摆拍",
+    "避免夸张回眸",
+    "避免双手同时抱臂",
+    "避免普通叉腰网红姿势",
+    "避免过度剧情化动作",
+    "避免手臂遮挡衣服主体",
+    "避免鞋子、裙摆被裁切",
+    "避免人物比例畸变",
+    "避免棚拍模特站姿",
+]
+
+
+# ── 工具函数 ──────────────────────────────────────────────────────────────────
+
+def _choose_mood(style_tags: list) -> str:
+    tags = set(style_tags or [])
+    scores = {
+        "power":  len(tags & _POWER_TAGS),
+        "soft":   len(tags & _SOFT_TAGS),
+        "formal": len(tags & _FORMAL_TAGS),
+    }
     best = max(scores, key=scores.get)
     return best if scores[best] > 0 else "soft"
 
 
-def build_pose_hint(item: dict, ootd_items: list = None, n: int = 3) -> str:
+def _collect_composition(categories: list) -> str:
+    rules, seen = [], set()
+    for cat in (categories or []):
+        for r in CATEGORY_COMPOSITION_RULES.get(cat, []):
+            if r not in seen:
+                rules.append(r)
+                seen.add(r)
+    return "；".join(rules[:5])
+
+
+# ── 公开接口 ──────────────────────────────────────────────────────────────────
+
+def build_pose_hint(
+    item: dict,
+    ootd_items: list = None,
+    scene_group: str = "commute_street",
+) -> str:
     """
-    从单品标签（+ 可选 OOTD 上下文）推断姿势建议。
-    返回可直接注入 image2 prompt 的自然语言段落。
+    返回可直接注入 image prompt 的姿势+构图段落。
 
-    ootd_items: 搭配中其他单品的 dict 列表。
-                单品试穿不传，OOTD 整套试穿时传入其余单品以修正整体风格判断。
-    n: 候选姿势数量，image2 选取最契合的一种。
+    item        主单品 dict（含 style, category, fit 字段）
+    ootd_items  搭配中所有单品（用于整体风格判断）
+    scene_group 由 scene_engine.pick_scene_group() 传入
     """
-    all_styles = set(item.get("style", []))
-    all_fits   = {item.get("fit", "")}
+    all_items  = [item] + (ootd_items or [])
+    style_tags = [s for it in all_items for s in (it.get("style") or [])]
+    categories = list(dict.fromkeys(
+        it.get("category", "") for it in all_items if it.get("category")
+    ))
 
-    if ootd_items:
-        for it in ootd_items:
-            all_styles.update(it.get("style", []))
-            all_fits.add(it.get("fit", ""))
-
-    vibe = _score_vibe(all_styles, all_fits)
-    pool = _POSE_POOLS[vibe]
-    selected = random.sample(pool, min(n, len(pool)))
-
-    category = item.get("category", "")
-    bonus = _CATEGORY_BONUS.get(category, "")
-    style_label = "、".join(sorted(all_styles)[:4]) if all_styles else "日常"
+    anchor      = random.choice(SCENE_ACTION_ANCHORS.get(scene_group, SCENE_ACTION_ANCHORS["commute_street"]))
+    mood        = _choose_mood(style_tags)
+    modifier    = STYLE_MOOD_MODIFIERS[mood]
+    composition = _collect_composition(categories) or "保持全身穿搭清楚，人物比例自然，主要单品不被遮挡"
+    camera      = SCENE_CAMERA_LANGUAGE.get(scene_group, "")
+    negative    = "；".join(GLOBAL_NEGATIVE_RULES)
 
     lines = [
-        f"整体穿搭风格：{style_label}",
-        f"从以下姿势中选取最契合风格的一种生成：",
+        f"姿势动作：{anchor}。",
+        f"气质表达：{modifier['body']}；{modifier['expression']}。",
+        f"镜头语言：{camera}。" if camera else "",
+        f"构图约束：{composition}。",
+        f"避免：{modifier['avoid']}；{negative}。",
+        "画面要像真实穿搭博主的 OOTD 照片，人物动作自然，穿搭是视觉重点。",
     ]
-    for i, pose in enumerate(selected, 1):
-        lines.append(f"  {i}. {pose}")
-    if bonus:
-        lines.append(f"构图备注：{bonus}")
-    lines.append("动作自然真实，与整体穿搭气质保持一致。")
-
-    return "\n".join(lines)
+    return "\n".join(l for l in lines if l)

@@ -46,10 +46,12 @@ def generate_outfit_grid(
     user_photo: str,
     outfits: list,
     config_version: str = "grid_v1",
+    occasion: str = None,
+    is_weekend: bool = None,
 ) -> list:
     """
     一次 image2 调用生成多套穿搭拼图，裁切后返回各套效果图路径。
-    prompt 构建 + pose_engine 统一由 tryon_skill.run_grid() 负责。
+    prompt 构建 + pose_engine + scene_engine 统一由 tryon_skill.run_grid() 负责。
     """
     config = _load_config(config_version)
     cols, rows = config["cols"], config["rows"]
@@ -64,6 +66,8 @@ def generate_outfit_grid(
         wardrobe=wardrobe,
         cols=cols,
         rows=rows,
+        occasion=occasion,
+        is_weekend=is_weekend,
     )
     return _crop_grid(grid_path, cols, rows)[:n]
 

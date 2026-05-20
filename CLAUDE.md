@@ -63,9 +63,12 @@ HTTP → app.py（FastAPI）
 | `app.py` | FastAPI 入口；所有 HTTP 路由；会话管理（内存）；每晚 20:00 Tomorrow Planning 定时任务 |
 | `db.py` | SQLite CRUD — `wardrobe` / `user_profile` / `look` 三张表 |
 | `fashion_router.py` | 意图分类：Groq `llama-3.3-70b-versatile` → 规则兜底；返回 `recommend/swap_item/quick_tryon/wardrobe_query/save_look/unknown` |
-| `fashion_dispatch.py` | 调度层：接收 route key → 调对应处理函数 → 返回 `{action, payload, message}` |
+| `fashion_dispatch.py` | 调度层：接收 route key → 调对应处理函数 → 返回 Hub Action 标准 `AgentResponse`（含 cards/context_update/entities） |
 | `outfit_recommender.py` | 按天气/场合推荐 N 套搭配；内存+磁盘双层缓存（`images/recommend_cache.json`）；用户温感偏移 |
-| `outfit_generator.py` | 构建 prompt → 调 image2 生成拼图 → PIL 裁切为单张效果图 |
+| `outfit_generator.py` | 轻量编排层：委托 `tryon_skill.run_grid()` 生成拼图 → PIL 裁切为单张效果图 |
+| `tryon_skill.py` | **A+B→C 试穿核心引擎**。构建 image2 prompt，集成 pose_engine + scene_engine 自动选姿势和背景。提供 `run()`（单套）和 `run_grid()`（多套拼图）两个入口 |
+| `pose_engine.py` | 时尚动作原子库：场景决定动作锚点（走路/坐/镜自拍等），风格决定气质修饰（power/soft/formal），品类决定构图约束（全身/鞋履/包等必须展示什么） |
+| `scene_engine.py` | 背景场景选择器：四层决策（occasion → 单品 style 强地点词 → mood×weekend 兜底 → 默认 commute_street），每个场景组下有 3-6 个 variant（含 prompt + occasion/best_for 标签），两级打分选最优 |
 | `phase1_wardrobe.py` | Groq Vision（llama-4-scout）识别单品 + image2 美化平铺图 |
 | `phase2_tryon.py` | 调 image2 做虚拟试穿（quick_tryon 任务） |
 | `look_manager.py` | 保存穿搭日志；保存后静默触发 `style_identity` 更新 |
@@ -91,7 +94,29 @@ HTTP → app.py（FastAPI）
 
 衣橱变动（上传/删除）或用户换主照时调 `outfit_recommender.clear_cache()` 使缓存失效。
 
+## 试穿 Prompt 构建流程（v2）
+
+```
+outfit_generator.generate_outfit_grid()
+  └── tryon_skill.run_grid()                    # 编排器
+        ├── scene_engine.pick_scene_group()      # 决定场景组（commute_street/date_restaurant/...）
+        │     ├── occasion 子串匹配 _SCENE_HINT
+        │     ├── 单品 style 命中 _STRONG_LOCATION_HINTS 白名单时触发场景
+        │     └── 兜底：mood × weekend → _STYLE_TO_DEFAULT_SCENE
+        ├── scene_engine.pick_scene_with_variant() # 场景组内选具体 variant（含 prompt + id，grid 四格去重）
+        ├── pose_engine.build_pose_hint()        # 姿势建议：action anchor + mood modifier + composition rules
+        └── _build_grid_prompt()                 # 拼装最终 image2 prompt
+
+tryon_skill.run()                                # 单套试穿入口（phase2_tryon / outfit_generator.regenerate 复用）
+  └── 同上，但只生成一套 prompt
+```
+
+**场景组一览**：`commute_street`（通勤街拍）、`office_clean`（办公室极简）、`date_restaurant`（约会/餐厅）、`travel_vacation`（旅行/度假）、`weekend_market`（周末市集）、`party_night`（派对/夜生活）、`campus_casual`（校园）、`home_mirror`（镜自拍）
+
+**风格 mood**：单品 style 标签自动归入 `power`（街头/机能/高街）、`soft`（法式/度假/学院）、`formal`（通勤/极简/老钱），影响场景选择和动作气质。
+
 ## Key Constraints
+
 
 **image2 服务**：本地图像生成，需与设备在同一 Wi-Fi（`192.168.31.50:8787`）。生成耗时 1-5 分钟，调用前先 `image2_client.healthz()` 检查在线状态。app.py 中所有 image2 调用均为后台任务，前端通过轮询 `/api/tasks/{id}` 或 `/api/recommend` 的 `status` 字段获取结果。
 

@@ -20,25 +20,9 @@ import os
 
 import image2_client
 from pose_engine import build_pose_hint
+import scene_engine
 
 _IMAGES_DIR = os.path.join(os.path.dirname(__file__), "images")
-
-_SCENE_PRESETS = {
-    "studio":  "浅暖灰摄影棚背景，均匀柔光，无任何道具和家具，时尚大片风格",
-    "outdoor": "户外自然光，背景高度虚化，景深效果，不出现任何文字、招牌、人物",
-    "indoor":  "极简室内，浅色白墙，侧面柔和自然光，无家具无道具，干净通透",
-}
-_OUTDOOR_STYLES = {"街头", "运动", "户外", "嘻哈", "机能"}
-_INDOOR_STYLES  = {"正式", "通勤", "商务", "职场", "OL"}
-
-
-def _pick_scene(items: list) -> str:
-    styles = {s for it in items for s in (it.get("style") or [])}
-    if styles & _OUTDOOR_STYLES:
-        return "outdoor"
-    if styles & _INDOOR_STYLES:
-        return "indoor"
-    return "studio"
 
 
 def _build_prompt(
@@ -47,8 +31,9 @@ def _build_prompt(
     styling_hint: str = "",
     pose_hint: str = "",
     color_override: str = "",
+    scene_desc: str = "",
 ) -> str:
-    scene = _SCENE_PRESETS[_pick_scene(items)]
+    scene = scene_desc or scene_engine.pick_scene(items)
 
     if not items:
         clothing_block = "【服装】还原参考图中的衣物"
@@ -113,10 +98,10 @@ def _build_prompt(
     return "\n".join(lines)
 
 
-def _build_grid_prompt(outfits_data: list, cols: int, rows: int) -> str:
+def _build_grid_prompt(outfits_data: list, cols: int, rows: int, scene_desc: str = "") -> str:
     """
     outfits_data: list of {"items": [...], "pose_hint": str}
-    每格独立描述单品 + 姿势，共用一个背景。
+    每格独立描述单品 + 姿势 + 背景（按各格自身风格决定）。
     """
     n = len(outfits_data)
     lines = [
@@ -132,25 +117,19 @@ def _build_grid_prompt(outfits_data: list, cols: int, rows: int) -> str:
         types  = "、".join(it.get("type", "") for it in items if it.get("type"))
         colors = "、".join(c for it in items for c in (it.get("color") or []))
 
+        cell_scene = od.get("scene_desc", "现代都市场景")
+
         cell = f"【第{i}格】{types}"
         if colors:
             cell += f"  颜色：{colors}"
         if pose_hint:
             cell += f"\n  姿势：{pose_hint}"
+        cell += f"\n  背景：{cell_scene}"
         lines.append(cell)
-
-    all_styles = {s for od in outfits_data for it in od["items"] for s in (it.get("style") or [])}
-    if all_styles & _OUTDOOR_STYLES:
-        scene_key = "outdoor"
-    elif all_styles & _INDOOR_STYLES:
-        scene_key = "indoor"
-    else:
-        scene_key = "studio"
 
     lines += [
         "",
         "【服装要求】严格还原每格图片中对应单品的颜色 / 版型 / 面料质感 / 印花细节",
-        f"【背景】各格统一：{_SCENE_PRESETS[scene_key]}",
         "【输出】等大拼图，无边框，无文字，无水印",
     ]
     return "\n".join(lines)
@@ -162,6 +141,8 @@ def run_grid(
     wardrobe: dict = None,
     cols: int = 2,
     rows: int = 2,
+    occasion: str = None,
+    is_weekend: bool = None,
 ) -> str:
     """
     一次 image2 调用生成 cols×rows 穿搭拼图，返回拼图路径（调用方负责裁切）。
@@ -169,6 +150,8 @@ def run_grid(
     user_photo  人物全身照路径
     outfits     recommend_outfits() 返回列表，每项含 item_ids
     wardrobe    iid → item dict（传入避免重复查 DB；None 时内部自动查）
+    occasion    用户输入的场合（透传自 fashion_router），None 时按风格×日期自动选
+    is_weekend  None 时由 scene_engine 自动判断
     """
     import db as _db
 
@@ -181,9 +164,22 @@ def run_grid(
 
     outfits_data = []
     for outfit in outfits:
-        items = [wardrobe.get(iid) for iid in outfit["item_ids"] if wardrobe.get(iid)]
-        pose_hint = build_pose_hint(items[0] if items else {}, ootd_items=items)
+        items       = [wardrobe.get(iid) for iid in outfit["item_ids"] if wardrobe.get(iid)]
+        scene_group = scene_engine.pick_scene_group(items, occasion=occasion, is_weekend=is_weekend)
+        pose_hint   = build_pose_hint(items[0] if items else {}, ootd_items=items, scene_group=scene_group)
         outfits_data.append({"items": items, "pose_hint": pose_hint})
+
+    # 每格根据自身风格独立选择场景，通过 exclude_variant_ids 避免四格重复
+    used_variant_ids = set()
+    for od in outfits_data:
+        scene_desc, variant_id = scene_engine.pick_scene_with_variant(
+            od["items"],
+            occasion=occasion,
+            is_weekend=is_weekend,
+            exclude_variant_ids=used_variant_ids,
+        )
+        od["scene_desc"] = scene_desc
+        used_variant_ids.add(variant_id)
 
     prompt = _build_grid_prompt(outfits_data, cols, rows)
 
@@ -217,6 +213,8 @@ def run(
     fit_hint: str = "",
     styling_hint: str = "",
     color_override: str = "",
+    occasion: str = None,
+    is_weekend: bool = None,
 ) -> str:
     """
     A + B → C
@@ -227,21 +225,23 @@ def run(
     fit_hint        版型描述字符串，如 "修身——穿着合身贴体"（可选）
     styling_hint    穿法描述字符串，如 "敞开穿——外套完全敞开"（可选）
     color_override  覆盖颜色描述，如 "砖红色"（可选）
+    occasion        用户输入的场合（可选）
+    is_weekend      None 时由 scene_engine 自动判断
 
     返回试穿效果图本地路径。
     """
     items = items or []
 
-    pose_hint = build_pose_hint(
-        items[0] if items else {},
-        ootd_items=items,
-    )
+    scene_group = scene_engine.pick_scene_group(items, occasion=occasion, is_weekend=is_weekend)
+    pose_hint   = build_pose_hint(items[0] if items else {}, ootd_items=items, scene_group=scene_group)
+    scene_desc = scene_engine.pick_scene(items, occasion=occasion, is_weekend=is_weekend)
     prompt = _build_prompt(
         items,
         fit_hint=fit_hint,
         styling_hint=styling_hint,
         pose_hint=pose_hint,
         color_override=color_override,
+        scene_desc=scene_desc,
     )
 
     valid_item_images = [p for p in item_images if p and os.path.isfile(p)]
