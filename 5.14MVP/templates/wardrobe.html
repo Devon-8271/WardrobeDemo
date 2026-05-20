@@ -240,10 +240,12 @@ function renderGrid(items) {
   grid.innerHTML = items.map(it => {
     const color  = CAT_COLORS[it.category] || "#999";
     const imgSrc = it.image_url || it.image_crop_url;
-    const imgHtml = imgSrc
-      ? `<div class="item-img"><img src="${escHtml(imgSrc)}" alt="" loading="lazy"
-           onerror="this.parentElement.innerHTML='<span>${escHtml(it.type)}</span>';this.parentElement.classList.add('placeholder')"></div>`
-      : `<div class="item-img placeholder"><span>${escHtml(it.type)}</span></div>`;
+    const imgHtml = it.beautifying
+      ? `<div class="item-img placeholder beautifying-placeholder"><span class="spinner" style="width:20px;height:20px;border-width:2px;opacity:0.4"></span></div>`
+      : imgSrc
+        ? `<div class="item-img"><img src="${escHtml(imgSrc)}" alt="" loading="lazy"
+             onerror="this.parentElement.innerHTML='<span>${escHtml(it.type)}</span>';this.parentElement.classList.add('placeholder')"></div>`
+        : `<div class="item-img placeholder"><span>${escHtml(it.type)}</span></div>`;
 
     const badge = it.beautifying
       ? `<div class="beautify-badge"><span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>美化中</div>` : "";
